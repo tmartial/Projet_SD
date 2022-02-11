@@ -11,6 +11,8 @@ Welcome to Projet_EETOS's documentation!
    :caption: Contents:
 
 	intro
+   modules
+   monmodule
 
 
 Indices and tables
