@@ -13,6 +13,7 @@ from PIL import Image
 from matplotlib import image
 
 from keras.datasets import mnist
+from keras.layers import Input, Dense, Conv2D, MaxPooling2D, UpSampling2D, Conv2DTranspose
 
 path1 = "C:/Users/toto9/OneDrive/Documents/4BIM S2/PROJET/img_align_celeba/img_align_celeba"
 listing = os.listdir(path1)
