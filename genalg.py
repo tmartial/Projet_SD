@@ -330,7 +330,7 @@ def new_generation(pop, fitness, eliteCount, crossoverFraction, Tc, Tm, pop_size
 
     return np.array(new_pop)
 
-def first_generation(pop_size, ind_length, E):
+def first_generation(pop_size, ind_length, mu, sigma):
     ''' The first_generation function creates a population composed of pseudo-randomly generated vectors.
         
         Parameters
@@ -349,7 +349,7 @@ def first_generation(pop_size, ind_length, E):
     '''
     pop = []
     for ind in range(pop_size):
-        pop.append([E*np.random.normal(loc=0.0, scale=1.0, size=None) for i in range(ind_length)])
+        pop.append([np.random.normal(loc=mu, scale=sigma, size=None) for i in range(ind_length)])
     return np.array(pop)
 
 
