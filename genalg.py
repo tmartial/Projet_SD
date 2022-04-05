@@ -349,7 +349,7 @@ def first_generation(pop_size, ind_length, mu, sigma):
     '''
     pop = []
     for ind in range(pop_size):
-        pop.append([np.random.normal(loc=mu, scale=sigma, size=None) for i in range(ind_length)])
+        pop.append([abs(np.random.normal(loc=mu, scale=sigma, size=None) for i in range(ind_length))])
     return np.array(pop)
 
 

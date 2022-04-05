@@ -78,6 +78,14 @@ index = IntVar(root, value = 1)
 
 ## Fonctions ###################################################################################
 def show_portraits():
+    ''' This function shows 6 portaits and relative comboboxes into a grid for the notation.
+        
+        Parameters
+        ----------
+        list : np.array
+            a population of 6 portraits
+    '''
+
     global all_cb
     all_cb=[]
     number=0
@@ -120,6 +128,12 @@ def show_portraits():
 
 
 def start():
+    ''' This function changes the home window into an image notation window.
+
+        It destroys the text labels, add a label 'selection', changes the command 
+        and the text of 'button_next' and call the function show_portaits().
+    '''
+
     welcome.destroy()
     intro.destroy()
     show_portraits()
@@ -131,7 +145,25 @@ def start():
     #button_next.configure(state='disabled')
     button_next.configure(command=confirm)
 
+
 def notation(list):
+    ''' This function changes the list of notations from strings to integrers.
+
+        - not at all similar = 0.1
+        - similar = 0.5
+        - very similar = 0.9
+        
+        Parameters
+        ----------
+        list : list[str]
+            a list of the notations
+
+        Returns
+        -------
+        list[int]
+            a list of int (0.1, 0.5, 0.9)
+    '''
+
     i=0
     for i in range(len(list)):
         if list[i]=="not at all similar":
@@ -141,7 +173,18 @@ def notation(list):
         elif list[i]=="very similar":
             list[i]=0.9
 
+    return list
+
+
 def SaveFile(img):
+    ''' This function allows to save an image in .jpeg format.
+        
+        Parameters
+        ----------
+        img : np.array
+            a vector of the final portrait
+    '''
+
     #data = [('All tyes(*.*)', '*.*')]
     file = asksaveasfile(mode='w', defaultextension = '.jpeg')
     if file :
@@ -149,6 +192,12 @@ def SaveFile(img):
 
 
 def end():
+    ''' This function changes the image notation window into a end window.
+
+        It destroys the grid with the portraits and the combobox, destroys the 'button_next', 
+        add a label, shows the final portrait and add a button to save it.
+    '''
+
     button_next.destroy()
     for button in root.grid_slaves():
         button.grid_forget()
@@ -169,39 +218,50 @@ def end():
     )
     button_save.place(relx=0.5, rely=0.8,anchor='center')
 
+
 def confirm():
+    ''' This function allows to confirm the notations.
+
+        It shows an askokcancel box. If 'ok' is selected, it goes to the next portrait selection.
+        If it's the 3th selection, it calls the function end().
+
+        Raises
+        ------
+        Warning
+            If a portrait got no notation
+    '''
+
     i=0
     for i in range(6):
         if all_cb[i].get()=="":
             messagebox.showinfo(title='Warning', 
                 message='Please select a notation for each portrait',
                 icon=WARNING)
-            break
-        else:  
-            ind=index.get()
-            answer = askokcancel(
-                title='Confirmation',
-                message='Do you want to confirm your selection?',
-                icon=WARNING)
+            return 0
 
-            if answer:
-                ind+=1
-                selection = Label(root,text='Selection '+str(ind)+'/10')
-                selection.grid(row=4, column=1)
-                index.set(ind)
+    ind=index.get()
+    answer = askokcancel(
+        title='Confirmation',
+        message='Do you want to confirm your selection?',
+        icon=WARNING)
 
-                j=0
-                all_lvl=[]
-                for j in range(6):
-                    all_lvl.append(all_cb[j].get())
-                    notation(all_lvl)
-                    all_cb[j].set("")
-                print(all_lvl)
-                show_portraits()
+    if answer:
+        ind+=1
+        selection = Label(root,text='Selection '+str(ind)+'/10')
+        selection.grid(row=4, column=1)
+        index.set(ind)
 
-            if ind==3:
-                end()
-            break
+        j=0
+        all_lvl=[]
+        for j in range(6):
+            all_lvl.append(all_cb[j].get())
+            notation(all_lvl)
+            all_cb[j].set("")
+        print(all_lvl)
+        show_portraits()
+
+        if ind==3:
+            end()
 
 
 ############
