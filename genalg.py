@@ -117,7 +117,7 @@ def crossing_over2(parents, Tc):
     
     for pos in range(0,children.shape[1]-1): # on parcoure le génome du parent 1, avec une chance Tc d'avoir crossing-over
         if rd.random() < Tc:
-            #print("it happened, at : ", i)
+            print("it happened, at : ", pos)
             #print(" before : ", new_P)
             tmp = np.copy(children[0,pos:])
             #print("tmp : \n", tmp)
@@ -159,6 +159,9 @@ def mean_genome(pop, Tmoy):
                 mean_pop.append(np.mean(k) for k in zip(pop[i], pop[indc]))
 
     return list(set(mean_pop))
+
+def mean_genome2(parents):
+    return np.mean(parents, axis=0)
 
 ##### POPULATION FUNCTION #####
 
@@ -355,9 +358,8 @@ def first_generation(pop_size, ind_length, E):
 if __name__=="__main__":
     pop = np.array([rd.choices([-2,2],k=10),rd.choices([-1,1],k=10)])
     print(pop,'\n')
-    popm = noise(0.5, pop, 5)
-    print("noise:\n",popm,'\n')
-    #popmc = crossing_over2(popm, 0.5)
-    #print("crossing over:\n",popmc)
-    print([i for i in range(10)])
+    #popm = noise(0.5, pop, 5)
+    #print("noise:\n",popm,'\n')
+    popmc = crossing_over2(pop, 0)
+    print("crossing over:\n",popmc)
    # print(mean_genome(popmc, 0.5))
