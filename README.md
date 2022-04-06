@@ -11,6 +11,13 @@ Our software is a tool that can be used to elaborate a "Portait-robot", based on
 
 ### FAQ section
 
+####  - Where do the initial images come from ?
+
+They are a subset of CelebA database (http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html).
+
+
+
+### ReadMe content (Sergio's class)
 - Two audiences : developers and users 
 - What does the program solves ?
 - Installation instructions
