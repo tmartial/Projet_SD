@@ -135,7 +135,8 @@ def show_faces_data(X, n=7, title=""):
 
 
 
-encoded_faces = np.loadtxt("encoded_faces.txt")
-decoded_faces = decode_faces(encoded_faces[0:7])
-plt.imshow(image.array_to_img(decoded_faces[1]))
-plt.show()
+#encoded_faces = np.loadtxt("encoded_faces_05_04_bis.txt")
+#print(encoded_faces.shape)
+#decoded_faces = decode_faces(encoded_faces)
+#plt.imshow(image.array_to_img(decoded_faces[1]))
+#plt.show()

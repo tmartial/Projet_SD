@@ -10,6 +10,10 @@ from tkinter.filedialog import asksaveasfile
 from PIL import ImageTk, Image #(sudo) pip3 install pillow
 import os
 
+import AEmodules as AEM
+from keras.preprocessing import image
+import numpy as np
+
 
 #########################
 #   WINDOW PARAMETERS   #
@@ -74,6 +78,7 @@ selected_lvl3 = tk.StringVar()
 selected_lvl4 = tk.StringVar()
 selected_lvl5 = tk.StringVar()
 index = IntVar(root, value = 1)
+global decoded_faces 
 
 
 ## Fonctions ###################################################################################
@@ -89,14 +94,16 @@ def show_portraits():
     global all_cb
     all_cb=[]
     number=0
-    
-    liste=os.listdir("./img") # Recupere le nom de tous les fichiers d'un dossier
+
+    portraits = decoded_faces[np.random.choice(decoded_faces.shape[0], 6, replace=False), :]
 
     for number in range(6):
-        imgpath = "./img" +'/'+liste[number] ## strchemin:str, chemin d'accès à l'image  
-        resize_image = Image.open(imgpath).resize((218, 178))
-        img = ImageTk.PhotoImage(resize_image)  ## Chargement d'une image à partir de PIL
-    
+        #liste=os.listdir("./img")
+        #imgpath = "./img" +'/'+liste[number] 
+        #resize_image = Image.open(imgpath).resize((218, 178))
+        #img = ImageTk.PhotoImage(resize_image)
+        img = ImageTk.PhotoImage(image.array_to_img(portraits[number]))
+
         button=Label(root,image=img)   #button = Portrait(root,number=number,image=img)
         button.photo = img   # assign to class variable to resolve problem with bug in `PhotoImage`
         if number<3:
@@ -279,6 +286,10 @@ intro = Label(root,
     font=("Helvetica", 15))
 intro.pack()
 intro.place(relx=0.5, rely=0.5,anchor='center')
+
+# Charge les 400 images encodées
+encoded_faces = np.loadtxt("encoded_faces_05_04_bis.txt")
+decoded_faces = AEM.decode_faces(encoded_faces)
 
 button_next = tk.Button(
     root,
