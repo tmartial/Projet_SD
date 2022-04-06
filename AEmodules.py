@@ -1,7 +1,7 @@
 from keras.models import Model, load_model
 
 #necessary or not ?
-#import tensorflow as tf
+import tensorflow as tf
 
 
 #load X_test ? 
@@ -20,7 +20,7 @@ def load_AE() :
     keras.engine.functional.Functional
         Trained Auto-encoder model   
     """
-    AE = load_model('faces_AE.h5')
+    AE = load_model('faces_AE_05_04.h5')
     return AE
 
 #load decoder 
@@ -34,7 +34,7 @@ def load_decoder() :
     keras.engine.functional.Functional
         Trained decoder model
     """
-    decoder = load_model('faces_decod.h5')
+    decoder = load_model('faces_decoder_05_04.h5')
     return decoder
 
 
@@ -97,6 +97,45 @@ def decode_faces(ga_vector):
     my_decoder = load_decoder()
     ga_vector_rs = ga_vector.reshape(len(ga_vector), 16, 16, 8)
     decoded_faces  = my_decoder.predict(ga_vector_rs)
+    return decoded_faces
+
+
+#### TESTS ##########################################################
+
+from keras.preprocessing import image
+import numpy as np
+import os
+import matplotlib.pyplot as plt
+
+
+#path="./img/"
+#imgs = []
+#for filemname in os.listdir(path):
+#    img = image.load_img(path+filemname, target_size = (128,128)) #resize to 128*128
+#    imgs.append(image.img_to_array(img))
+#imgs = np.array(imgs)
+#print(imgs.shape) 
+#print(imgs) 
+#encoded_img = get_encoded_face(imgs)
+#print(encoded_img.shape) 
+
+def show_faces_data(X, n=7, title=""):
+    plt.figure(figsize=(15, 5))
+    for i in range(n):
+        ax = plt.subplot(2,n,i+1)
+        plt.imshow(image.array_to_img(X[i]))
+        ax.get_xaxis().set_visible(False)
+        ax.get_yaxis().set_visible(False)
+    plt.suptitle(title, fontsize = 20)
+    plt.show()
+
+#faces=decode_faces(encoded_img)
+#print(faces.shape)
+#print(show_faces_data(faces, title=""))
 
 
 
+encoded_faces = np.loadtxt("encoded_faces.txt")
+decoded_faces = decode_faces(encoded_faces[0:7])
+plt.imshow(image.array_to_img(decoded_faces[1]))
+plt.show()
