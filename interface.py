@@ -100,9 +100,8 @@ def show_portraits():
     for number in range(6):
         #liste=os.listdir("./img")
         #imgpath = "./img" +'/'+liste[number] 
-        #resize_image = Image.open(imgpath).resize((218, 178))
-        #img = ImageTk.PhotoImage(resize_image)
-        img = ImageTk.PhotoImage(image.array_to_img(portraits[number]))
+        resize_image = image.array_to_img(portraits[number]).resize((250, 200))
+        img = ImageTk.PhotoImage(resize_image)
 
         button=Label(root,image=img)   #button = Portrait(root,number=number,image=img)
         button.photo = img   # assign to class variable to resolve problem with bug in `PhotoImage`
@@ -214,6 +213,8 @@ def end():
 
     image=Image.open('./img/jack.jpeg')
     pic=ImageTk.PhotoImage(image)
+    #resize_image = image.array_to_img(vector.resize((250, 200))
+    #pic = ImageTk.PhotoImage(resize_image)
     last_img = Label(root,image=pic)
     last_img.photo=pic
     last_img.place(relx=0.5, rely=0.5,anchor='center')
@@ -246,16 +247,16 @@ def confirm():
                 icon=WARNING)
             return 0
 
-    ind=index.get()
     answer = askokcancel(
         title='Confirmation',
         message='Do you want to confirm your selection?',
         icon=WARNING)
 
     if answer:
+        ind=index.get()
         ind+=1
         selection = Label(root,text='Selection '+str(ind)+'/10')
-        selection.grid(row=4, column=1)
+        selection.grid(row=5, column=1)
         index.set(ind)
 
         j=0
