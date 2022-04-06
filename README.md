@@ -1,7 +1,16 @@
 # Projet_SD
-Github for the Software Deployment project
 
-- Describe the project 
+## Github for the Software Development project (INSA Lyon, 4BIM, grp6)
+
+### Project's description
+
+Our software is a tool that can be used to elaborate a "Portait-robot", based on the similarity between given pictures and the witness memories.
+
+### Installation instructions 
+
+
+### FAQ section
+
 - Two audiences : developers and users 
 - What does the program solves ?
 - Installation instructions
