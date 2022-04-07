@@ -20,7 +20,7 @@ def load_AE() :
     keras.engine.functional.Functional
         Trained Auto-encoder model   
     """
-    AE = load_model('faces_AE_05_04.h5')
+    AE = load_model('./faces_AE_05_04.h5')
     return AE
 
 #load decoder 

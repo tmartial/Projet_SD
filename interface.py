@@ -347,7 +347,7 @@ intro.pack()
 intro.place(relx=0.5, rely=0.5,anchor='center')
 
 # Charge les 400 images encodées
-encoded_faces = np.loadtxt("C:/Users/toto9/OneDrive/Documents/4BIM S2/PROJET_V2/Projet_SD/encoded_faces_05_04_bis.txt")
+encoded_faces = np.loadtxt("./encoded_faces_05_04_bis.txt")
 encoded_faces_6 = encoded_faces[np.random.choice(encoded_faces.shape[0], 6, replace=False), :]
 portraits = AEM.decode_faces(encoded_faces_6)
 
