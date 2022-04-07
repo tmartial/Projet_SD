@@ -274,7 +274,7 @@ def add_ind(pop, ind, pop_size):
     # if the length of the "ind" is superior to pop_size, it means what's inside is the genes (64) of the individual and not a np.array reprensenting the genome
     # pop is  a list
     new_pop = pop.copy()
-    if (len(ind)>=6): # one individual in a list
+    if (len(ind)>=pop_size): # one individual in a list
         new_pop.append(ind)
     #elif (len(ind)==1): # one individual in a np.array
     #    for i in ind:
@@ -328,23 +328,29 @@ def new_generation(parents_pop, fitness, eliteCount, crossoverFraction, Tc, Tm, 
     #print(type(elite_pop))
     new_pop = add_ind(new_pop, np.array(elite_pop), pop_size)
     # THINK OF A MORE EFFICIENT WAY + make a function ?
-    #print(new_pop)
+    #print("elite", len(new_pop))
 
     # Crossing over children
     nb_crossover = int((len(pop)-eliteCount)*crossoverFraction)
-    for i in range(nb_crossover):
-        parents = rd.choices(pop, weights=fitness, k=2) # parents is a list of np.arrays
-        new_pop = add_ind(new_pop, crossing_over2(parents, Tc), pop_size)
-    #print(new_pop)
+    while (len(new_pop)< (eliteCount + nb_crossover)):
+        #parents = rd.choices(pop, weights=fitness, k=2) # parents is a list of np.arrays
+        #parents = np.random.choice(pop, 2, replace=False, p=fitness)
+        i_parents = np.random.choice(pop_size, 2, replace=False, p=fitness/sum(fitness))
+        child = mean_genome2(pop[i_parents])
+        if not np.any(np.all(child == new_pop, axis=1)):
+            new_pop = add_ind(new_pop, child, pop_size)
+    #print("mean",len(new_pop))
+
     # Fill the new pop
-    nb_mutated = int(pop_size + 1 - eliteCount - nb_crossover) #number of individuals who only undergo mutation
-    mutated = rd.choices(pop, weights=fitness, k=nb_mutated) # mutated is a list of np.arrays
-    new_pop = add_ind(new_pop, mutated, pop_size)
-    #print(new_pop)
+    nb_mutated = int(pop_size - eliteCount - nb_crossover) #number of individuals who only undergo mutation
+    #mutated = rd.choices(pop, weights=fitness, k=nb_mutated) # mutated is a list of np.arrays
+    i_mutated = np.random.choice(pop_size, nb_mutated, replace=False, p=fitness/sum(fitness))
+    new_pop = add_ind(new_pop, pop[i_mutated], pop_size)
+    #print("mutated",len(new_pop))
     # Apply mutation (noise)
     # usually, Tm = 1/len(genome)
-    new_pop = noise(Tm, new_pop[eliteCount:], eps)
-    #print(new_pop)
+    new_pop[eliteCount:] = noise(Tm, new_pop[eliteCount:], eps)
+    #print("noise",len(new_pop))
     return np.array(new_pop)
 
 def first_generation(pop_size, ind_length, mu, sigma):
@@ -375,6 +381,7 @@ def first_generation(pop_size, ind_length, mu, sigma):
 if __name__=="__main__":
     #pop = [np.array(rd.choices([-2,2],k=10)),np.array(rd.choices([-1,1],k=10))]
     pop2 = np.array([np.array(rd.choices([-3,3],k=10)),np.array(rd.choices([-4,4],k=10)),np.array(rd.choices([-6,6],k=10)),np.array(rd.choices([-9,9],k=10)),np.array(rd.choices([-5,5],k=10))]) #elitepop
+    #pop2 = [np.array(rd.choices([-3,3],k=10)),np.array(rd.choices([-4,4],k=10)),np.array(rd.choices([-6,6],k=10)),np.array(rd.choices([-9,9],k=10)),np.array(rd.choices([-5,5],k=10))] #elitepop
     #pop3 = rd.choices(pop2, k=2) # parents
     #pop4 = rd.choices(pop2, k=2) #[np.array([rd.choices([-5,5],k=10)])] # one mutation
     #pop4 = [np.array([])]
@@ -382,7 +389,7 @@ if __name__=="__main__":
     #print("\npop2", pop2)
     #print("\npop3", pop3)
     #print("\npop4", pop4)
-    fitness = [0.9 , 0.5, 0.1, 0.1, 0.9]
+    fitness = np.array([0.9 , 0.5, 0.1, 0.1, 0.9])
     eliteCount = 1
     crossoverFraction = 0.8
     Tc = 0.3
@@ -390,13 +397,29 @@ if __name__=="__main__":
     pop_size = 5
     eps = 20
 
+    #L = np.copy(pop2[1])
+    #K = np.array(rd.choices([-10,10],k=10))
+
+    #print("pop", pop2)
+    #print("L",L)
+    #print("K", K)
+    #print("L in pop", np.any(np.all(L == pop2, axis=1)))
+    #print("K in pop",np.any(np.all(K == pop2, axis=1)))
+    
     #pop2mut = noise(Tm, pop2, eps)
     
-
     #print(pop2.shape[0])
     new_pop = new_generation(pop2, fitness, eliteCount, crossoverFraction, Tc, Tm, pop_size, eps)
     print("old_pop\n", pop2)
     print("new_pop\n", new_pop)
+    print(len(pop2))
+    #print(type(pop2[0]))
+    #print(type(pop2[0,0]))
+    #print("\n")
+    print(len(new_pop))
+    #print(type(new_pop[0]))
+    #print(type(new_pop[0,0]))
+
     #pop_test1 = add_ind(pop, pop2, 6)
     #print("\npoptest1", pop_test1)
     
