@@ -321,7 +321,7 @@ def confirm():
             print("portrait", portraits.shape)
             print("note", note)
             all_cb[j].set("")
-        ng = genalg.new_generation(encoded_faces_6,note,1,1,1,1,6,1)
+        ng = genalg.new_generation(encoded_faces_6,note,1,1,1,6,1)
         ng_decoded = AEM.decode_faces(ng)
         print(all_lvl)
         show_portraits_bis(ng_decoded)
