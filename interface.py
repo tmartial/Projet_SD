@@ -46,34 +46,35 @@ root.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
 ######################
 
 ## Sélection par choix #########################################################################
-"""
-select = IntVar(root, value = 0)
-def on_click(number):
-    print(all_buttons[number])
-    if  all_buttons[number]['highlightbackground']=='red':
-        all_buttons[number].configure(highlightbackground='#d9d9d9')
-    else :
-        all_buttons[number].configure(highlightbackground='red')
 
-    for i in range(6):
-        if  all_buttons[i]['highlightbackground']=='red':
-            button_next.configure(state='active')
-            break
-        else:
-            button_next.configure(state='disabled')
-    
-    sel=0
-    for i in range(6):
-        if  all_buttons[i]['highlightbackground']=='red':
-            sel+=1
-            select.set(sel)   
+def on_click(number):
+    if button_end['state']=='normal':
+        return 0
+
+    print(all_buttons[number])
+    all_buttons[number].configure(highlightbackground='red')
+
+    answer = askokcancel(
+        title='Confirmation',
+        message='Do you want to select this portrait as final portrait?',
+        icon=WARNING)
+
+    if answer:
+        portraits = AEM.decode_faces(encoded_faces_6)
+        end(portraits[number])
+
+    else :
+        all_buttons[number].configure(highlightbackground='#d9d9d9')
+        button_next.configure(state='normal')
+        button_recharge.configure(state='normal')
+        button_end.configure(state='normal')
 
 class Portrait(Button):
     def __init__(self, master, number, image):
-        Button.__init__(self, master, image=image,command=lambda: on_click(number),activebackground='#345')
- """ 
+        Button.__init__(self, master, image=image,command=lambda: on_click(number))
 
-## Variables globales ##########################################################################
+
+## Variables de contrôle #######################################################################
 selected_lvl0 = tk.StringVar()
 selected_lvl1 = tk.StringVar()
 selected_lvl2 = tk.StringVar()
@@ -81,25 +82,23 @@ selected_lvl3 = tk.StringVar()
 selected_lvl4 = tk.StringVar()
 selected_lvl5 = tk.StringVar()
 index = IntVar(root, value = 1)
-global decoded_faces 
-
 
 ## Fonctions ###################################################################################
 
-def show_portraits():
+def show_portraits(portraits):
     ''' This function shows 6 portaits and relative comboboxes into a grid for the notation.
         
         Parameters
         ----------
-        list : np.array
+        portraits : np.array
             a population of 6 portraits
     '''
 
     global all_cb
+    global all_buttons
+    all_buttons=[]
     all_cb=[]
     number=0
-
-    portraits = decoded_faces[np.random.choice(decoded_faces.shape[0], 6, replace=False), :]
 
     for number in range(6):
         #liste=os.listdir("./img")
@@ -107,7 +106,7 @@ def show_portraits():
         resize_image = image.array_to_img(portraits[number]).resize((250, 200))
         img = ImageTk.PhotoImage(resize_image)
 
-        button=Label(root,image=img)   #button = Portrait(root,number=number,image=img)
+        button=Portrait(root,image=img,number=number)   #button = Portrait(root,number=number,image=img)
         button.photo = img   # assign to class variable to resolve problem with bug in `PhotoImage`
         if number<3:
             R=1
@@ -122,7 +121,7 @@ def show_portraits():
         lvl['state'] = 'readonly'
         lvl.grid(row=R+1, column=C)
         
-        #all_buttons.append(button)
+        all_buttons.append(button)
         all_cb.append(lvl)
 
         
@@ -137,53 +136,6 @@ def show_portraits():
     root.grid_rowconfigure(5, weight=1)
     root.grid_rowconfigure(6, weight=2)
 
-
-def show_portraits_bis(portraits):
-    ''' This function shows 6 portaits and relative comboboxes into a grid for the notation.
-        
-        Parameters
-        ----------
-        list : np.array
-            a population of 6 portraits
-    '''
-    global all_cb
-    all_cb=[]
-    number=0
-
-    for number in range(6):
-        #liste=os.listdir("./img")
-        #imgpath = "./img" +'/'+liste[number] 
-        resize_image = image.array_to_img(portraits[number]).resize((250, 200))
-        img = ImageTk.PhotoImage(resize_image)
-
-        button=Label(root,image=img)   #button = Portrait(root,number=number,image=img)
-        button.photo = img   # assign to class variable to resolve problem with bug in `PhotoImage`
-        if number<3:
-            R=1
-            C=number
-        else :
-            R=3
-            C=number-3
-
-        button.grid(row=R, column=C)
-        lvl = ttk.Combobox(root, textvariable='selected_lvl'+str(number))
-        lvl['values'] = ["not at all similar","similar","very similar"]
-        lvl['state'] = 'readonly'
-        lvl.grid(row=R+1, column=C)
-        
-        #all_buttons.append(button)
-        all_cb.append(lvl)
-        
-    root.grid_columnconfigure(1, weight=1)
-    root.grid_columnconfigure(2, weight=1)
-    root.grid_columnconfigure(0, weight=1)
-    root.grid_rowconfigure(0, weight=1)
-    root.grid_rowconfigure(1, weight=2)
-    root.grid_rowconfigure(2, weight=1)
-    root.grid_rowconfigure(3, weight=2)
-    root.grid_rowconfigure(4, weight=1)
-    root.grid_rowconfigure(5, weight=1)
-    root.grid_rowconfigure(6, weight=2)
 
 def start():
     ''' This function changes the home window into an image notation window.
@@ -194,15 +146,21 @@ def start():
 
     welcome.destroy()
     intro.destroy()
-    show_portraits_bis(portraits)
+
+    show_portraits(portraits)
+
     ind=index.get()
     selection = Label(root, 
             text='Selection '+str(ind)+'/10')
     selection.grid(row=5, column=1)
-    button_next.configure(text='Confirm selection')
-    #button_next.configure(state='disabled')
-    button_next.configure(command=confirm)
 
+    button_next.configure(text='Confirm selection')
+    button_next.configure(command=confirm)
+    button_next.place(relx=0.5, rely=0.95,anchor='center')
+
+    
+    button_recharge.place(relx=0.2, rely=0.95,anchor='center')
+    button_end.place(relx=0.8, rely=0.95,anchor='center')
 
 
 def notation(list):
@@ -250,24 +208,27 @@ def SaveFile(img):
         img.save(file)
 
 
-def end():
+def end(img):
     ''' This function changes the image notation window into a end window.
 
-        It destroys the grid with the portraits and the combobox, destroys the 'button_next', 
+        It destroys the grid with the portraits and the combobox, destroys the buttons, 
         add a label, shows the final portrait and add a button to save it.
     '''
 
     button_next.destroy()
+    button_recharge.destroy()
+    button_end.destroy()
+
     for button in root.grid_slaves():
         button.grid_forget()
 
     end = Label(root,text='Here is your portrait !',font=("Helvetica", 30))
     end.place(relx=0.5, rely=0.2,anchor='center')
 
-    image=Image.open('./img/jack.jpeg')
-    pic=ImageTk.PhotoImage(image)
-    #resize_image = image.array_to_img(vector.resize((250, 200))
-    #pic = ImageTk.PhotoImage(resize_image)
+    #image=Image.open('./img/jack.jpeg')
+    #pic=ImageTk.PhotoImage(image)
+    resize_image = image.array_to_img(img).resize((250, 200))
+    pic = ImageTk.PhotoImage(resize_image)
     last_img = Label(root,image=pic)
     last_img.photo=pic
     last_img.place(relx=0.5, rely=0.5,anchor='center')
@@ -275,16 +236,36 @@ def end():
     button_save = tk.Button(
         root,
         text="Save portrait",
-        command = lambda : SaveFile(image)
+        command = lambda : SaveFile(resize_image)
     )
     button_save.place(relx=0.5, rely=0.8,anchor='center')
+
+
+def recharge():
+    ind=index.get()
+    global encoded_faces_6
+    global note
+    if ind==1 :
+        encoded_faces_6 = encoded_faces[np.random.choice(encoded_faces.shape[0], 6, replace=False), :]
+    else :
+        encoded_faces_6 = genalg.new_generation(encoded_faces_6,note,1,1,1,1,6,1)    
+    portraits = AEM.decode_faces(encoded_faces_6)
+    show_portraits(portraits)
+
+
+def choose_portrait():
+    for i in range(6):
+        all_buttons[i].configure(activebackground='#345')
+    button_next.configure(state='disabled')
+    button_recharge.configure(state='disabled')
+    button_end.configure(state='disabled')
 
 
 def confirm():
     ''' This function allows to confirm the notations.
 
         It shows an askokcancel box. If 'ok' is selected, it goes to the next portrait selection.
-        If it's the 3th selection, it calls the function end().
+        If it's the 5th selection, it calls the function end().
 
         Raises
         ------
@@ -314,20 +295,19 @@ def confirm():
         j=0
         all_lvl=[]
         for j in range(6):
-            print("all_cb", all_cb)
             all_lvl.append(all_cb[j].get())
-            print("all_lvl", all_lvl)
+            global note
             note = np.array(notation(all_lvl))
-            print("portrait", portraits.shape)
             print("note", note)
             all_cb[j].set("")
-        ng = genalg.new_generation(encoded_faces_6,note,1,1,1,1,6,1)
-        ng_decoded = AEM.decode_faces(ng)
-        print(all_lvl)
-        show_portraits_bis(ng_decoded)
+        global encoded_faces_6
+        encoded_faces_6 = genalg.new_generation(encoded_faces_6,note,1,1,1,1,6,1)
+        portraits = AEM.decode_faces(encoded_faces_6)
+        show_portraits(portraits)
 
-        if ind==3:
-            end()
+        if ind==5:
+            portraits = AEM.decode_faces(encoded_faces_6)
+            end(portraits[0])
 
 
 ############
@@ -346,8 +326,10 @@ intro = Label(root,
 intro.pack()
 intro.place(relx=0.5, rely=0.5,anchor='center')
 
+
 # Charge les 400 images encodées
 encoded_faces = np.loadtxt("./encoded_faces_05_04_bis.txt")
+# Choix de 6 images au hasard
 encoded_faces_6 = encoded_faces[np.random.choice(encoded_faces.shape[0], 6, replace=False), :]
 portraits = AEM.decode_faces(encoded_faces_6)
 
@@ -359,7 +341,17 @@ button_next = tk.Button(
 )
 button_next.place(relx=0.5, rely=0.95,anchor='center')
 
+button_recharge = tk.Button(
+    root,
+    text="No portrait matches...",
+    command=recharge
+)
 
+button_end = tk.Button(
+    root,
+    text="There is my portrait !",
+    command=choose_portrait
+)
 
 root.mainloop()
 
