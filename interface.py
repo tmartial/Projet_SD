@@ -2,6 +2,7 @@
 #   IMPORTS   #
 ###############
 
+from gettext import ngettext
 import tkinter as tk
 from tkinter import ttk,messagebox
 from tkinter import *
@@ -11,8 +12,10 @@ from PIL import ImageTk, Image #(sudo) pip3 install pillow
 import os
 
 import AEmodules as AEM
+import genalg 
 from keras.preprocessing import image
 import numpy as np
+
 
 
 #########################
@@ -82,6 +85,7 @@ global decoded_faces
 
 
 ## Fonctions ###################################################################################
+
 def show_portraits():
     ''' This function shows 6 portaits and relative comboboxes into a grid for the notation.
         
@@ -120,6 +124,7 @@ def show_portraits():
         
         #all_buttons.append(button)
         all_cb.append(lvl)
+
         
     root.grid_columnconfigure(1, weight=1)
     root.grid_columnconfigure(2, weight=1)
@@ -133,6 +138,53 @@ def show_portraits():
     root.grid_rowconfigure(6, weight=2)
 
 
+def show_portraits_bis(portraits):
+    ''' This function shows 6 portaits and relative comboboxes into a grid for the notation.
+        
+        Parameters
+        ----------
+        list : np.array
+            a population of 6 portraits
+    '''
+    global all_cb
+    all_cb=[]
+    number=0
+
+    for number in range(6):
+        #liste=os.listdir("./img")
+        #imgpath = "./img" +'/'+liste[number] 
+        resize_image = image.array_to_img(portraits[number]).resize((250, 200))
+        img = ImageTk.PhotoImage(resize_image)
+
+        button=Label(root,image=img)   #button = Portrait(root,number=number,image=img)
+        button.photo = img   # assign to class variable to resolve problem with bug in `PhotoImage`
+        if number<3:
+            R=1
+            C=number
+        else :
+            R=3
+            C=number-3
+
+        button.grid(row=R, column=C)
+        lvl = ttk.Combobox(root, textvariable='selected_lvl'+str(number))
+        lvl['values'] = ["not at all similar","similar","very similar"]
+        lvl['state'] = 'readonly'
+        lvl.grid(row=R+1, column=C)
+        
+        #all_buttons.append(button)
+        all_cb.append(lvl)
+        
+    root.grid_columnconfigure(1, weight=1)
+    root.grid_columnconfigure(2, weight=1)
+    root.grid_columnconfigure(0, weight=1)
+    root.grid_rowconfigure(0, weight=1)
+    root.grid_rowconfigure(1, weight=2)
+    root.grid_rowconfigure(2, weight=1)
+    root.grid_rowconfigure(3, weight=2)
+    root.grid_rowconfigure(4, weight=1)
+    root.grid_rowconfigure(5, weight=1)
+    root.grid_rowconfigure(6, weight=2)
+
 def start():
     ''' This function changes the home window into an image notation window.
 
@@ -142,7 +194,7 @@ def start():
 
     welcome.destroy()
     intro.destroy()
-    show_portraits()
+    show_portraits_bis(portraits)
     ind=index.get()
     selection = Label(root, 
             text='Selection '+str(ind)+'/10')
@@ -150,6 +202,7 @@ def start():
     button_next.configure(text='Confirm selection')
     #button_next.configure(state='disabled')
     button_next.configure(command=confirm)
+
 
 
 def notation(list):
@@ -258,15 +311,20 @@ def confirm():
         selection = Label(root,text='Selection '+str(ind)+'/10')
         selection.grid(row=5, column=1)
         index.set(ind)
-
         j=0
         all_lvl=[]
         for j in range(6):
+            print("all_cb", all_cb)
             all_lvl.append(all_cb[j].get())
-            notation(all_lvl)
+            print("all_lvl", all_lvl)
+            note = np.array(notation(all_lvl))
+            print("portrait", portraits.shape)
+            print("note", note)
             all_cb[j].set("")
+        ng = genalg.new_generation(encoded_faces_6,note,1,1,1,1,6,1)
+        ng_decoded = AEM.decode_faces(ng)
         print(all_lvl)
-        show_portraits()
+        show_portraits_bis(ng_decoded)
 
         if ind==3:
             end()
@@ -289,8 +347,10 @@ intro.pack()
 intro.place(relx=0.5, rely=0.5,anchor='center')
 
 # Charge les 400 images encodées
-encoded_faces = np.loadtxt("encoded_faces_05_04_bis.txt")
-decoded_faces = AEM.decode_faces(encoded_faces)
+encoded_faces = np.loadtxt("C:/Users/toto9/OneDrive/Documents/4BIM S2/PROJET_V2/Projet_SD/encoded_faces_05_04_bis.txt")
+encoded_faces_6 = encoded_faces[np.random.choice(encoded_faces.shape[0], 6, replace=False), :]
+portraits = AEM.decode_faces(encoded_faces_6)
+
 
 button_next = tk.Button(
     root,
@@ -298,6 +358,7 @@ button_next = tk.Button(
     command=start
 )
 button_next.place(relx=0.5, rely=0.95,anchor='center')
+
 
 
 root.mainloop()
