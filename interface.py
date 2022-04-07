@@ -64,6 +64,8 @@ def on_click(number):
         end(portraits[number])
 
     else :
+        for i in range(6):
+            all_buttons[i].configure(activebackground='#d9d9d9')
         all_buttons[number].configure(highlightbackground='#d9d9d9')
         button_next.configure(state='normal')
         button_recharge.configure(state='normal')
