@@ -300,10 +300,10 @@ def confirm():
             note = np.array(notation(all_lvl))
             print("note", note)
             all_cb[j].set("")
-        global encoded_faces_6
-        encoded_faces_6 = genalg.new_generation(encoded_faces_6,note,1,1,1,1,6,1)
-        portraits = AEM.decode_faces(encoded_faces_6)
-        show_portraits(portraits)
+        ng = genalg.new_generation(encoded_faces_6,note,1,1,1,6,1)
+        ng_decoded = AEM.decode_faces(ng)
+        print(all_lvl)
+        show_portraits_bis(ng_decoded)
 
         if ind==5:
             portraits = AEM.decode_faces(encoded_faces_6)
