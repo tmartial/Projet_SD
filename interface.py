@@ -54,9 +54,9 @@ selected_lvl3 = tk.StringVar()
 selected_lvl4 = tk.StringVar()
 selected_lvl5 = tk.StringVar()
 selected_lvl=[selected_lvl0,selected_lvl1,selected_lvl2,selected_lvl3,selected_lvl4,selected_lvl5]
-lvls = (('not at all similar', 0.1),
-         ('similar', 0.5),
-         ('very similar', 0.9))
+lvls = (('not at all similar', 0.1, '#E59866'),
+         ('similar', 0.5, '#F9E79F'),
+         ('very similar', 0.9, '#A9DFBF'))
 index = IntVar(root, value = 1)
 
 
@@ -180,7 +180,7 @@ def show_portraits(portraits):
 
         button.grid(row=R, column=C)
         for lvl in lvls:
-            r = Radiobutton(root, text=lvl[0], value=lvl[1], variable=selected_lvl[number])
+            r = Radiobutton(root, text=lvl[0], value=lvl[1], variable=selected_lvl[number], indicatoron=0, bg=lvl[2], highlightthickness=0, width = 15)
             r.grid(row=R+1, column=C)
             R+=1  
             all_radiob.append(r)
@@ -444,7 +444,7 @@ button_next = tk.Button(
     text="Start identification",
     command=start
 )
-button_next.place(relx=0.5, rely=0.95,anchor='center')
+button_next.place(relx=0.5, rely=0.8,anchor='center')
 
 button_recharge = tk.Button(
     root,
