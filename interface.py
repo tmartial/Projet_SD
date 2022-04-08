@@ -27,7 +27,7 @@ root.title('PROJET EETO')
 
 window_width = 900
 window_height = 700
-root.resizable(False, False)
+root.resizable(True, True)
 
 # get the screen dimension
 screen_width = root.winfo_screenwidth()
