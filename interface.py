@@ -45,9 +45,42 @@ root.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
 #   IDENTIFICATION   #
 ######################
 
-## Sélection par choix #########################################################################
+## Variables de contrôle ##########################################################################
+
+selected_lvl0 = tk.StringVar()
+selected_lvl1 = tk.StringVar()
+selected_lvl2 = tk.StringVar()
+selected_lvl3 = tk.StringVar()
+selected_lvl4 = tk.StringVar()
+selected_lvl5 = tk.StringVar()
+selected_lvl=[selected_lvl0,selected_lvl1,selected_lvl2,selected_lvl3,selected_lvl4,selected_lvl5]
+lvls = (('not at all similar', 0.1),
+         ('similar', 0.5),
+         ('very similar', 0.9))
+index = IntVar(root, value = 1)
+
+
+## Sélection par choix ############################################################################
 
 def on_click(number):
+    ''' This function defines the Portrait selected as the final portrait.
+        
+        When a Portrait is selected, its highlightbackground changes in red.
+        It shows an askokcancel box :
+            If 'ok' is selected, it calls the function end() with the selected Portrait as final portrait. 
+            If 'cancel' is selected, the buttons are reactivated, the highlightbackground of the selected 
+            Portrait and the activebackgrounds are removed.
+        
+        Parameters
+        ----------
+        number : int
+            the id of the portrait clicked [0-5]
+
+        Raises
+        ------
+        Return 0
+            If 'button_end' isn't clicked
+    '''
     if button_end['state']=='normal':
         return 0
 
@@ -71,29 +104,45 @@ def on_click(number):
         button_recharge.configure(state='normal')
         button_end.configure(state='normal')
 
+
 class Portrait(Button):
+    ''' This class defines what is a Portrait.
+        
+        A Portrait is a button with an image and an id.
+        
+        Parameters
+        ----------
+        master
+            the parent window
+        number
+            the id of the portrait
+        image
+            the image of the portrait
+
+        Example
+        --------
+        >>>liste=os.listdir("./img")
+        >>>imgpath = "./img" +'/'+liste[1]
+        >>>image=Image.open(imgpath)
+        >>>img = ImageTk.PhotoImage(image)
+        >>>portrait=Portrait(root,image=img,number=1)   
+        >>>portrait.photo = img   # resolve problem with bug in `PhotoImage`
+        >>>portrait.pack(ipadx=10,ipady=10)
+    '''
     def __init__(self, master, number, image):
         Button.__init__(self, master, image=image,command=lambda: on_click(number))
 
 
-## Variables de contrôle #######################################################################
-selected_lvl0 = tk.StringVar()
-selected_lvl1 = tk.StringVar()
-selected_lvl2 = tk.StringVar()
-selected_lvl3 = tk.StringVar()
-selected_lvl4 = tk.StringVar()
-selected_lvl5 = tk.StringVar()
-selected_lvl=[selected_lvl0,selected_lvl1,selected_lvl2,selected_lvl3,selected_lvl4,selected_lvl5]
-lvls = (('not at all similar', 0.1),
-         ('similar', 0.5),
-         ('very similar', 0.9))
-index = IntVar(root, value = 1)
 
-## Fonctions ###################################################################################
+
+## Sélection par notation ###################################################################################
 
 def show_portraits(portraits):
-    ''' This function shows 6 portaits and relative comboboxes into a grid for the notation.
-        
+    ''' This function shows 6 Portaits and relative radiobuttons into a grid for the notation.
+
+        Each Portrait has 3 radiobuttons underneath : 'not at all similar', 'similar' and 'very similar'.
+        Only 1 of these 3 radiobuttons can be selected.
+
         Parameters
         ----------
         portraits : np.array
@@ -113,8 +162,8 @@ def show_portraits(portraits):
         resize_image = image.array_to_img(portraits[number]).resize((250, 200))
         img = ImageTk.PhotoImage(resize_image)
 
-        button=Portrait(root,image=img,number=number)   #button = Portrait(root,number=number,image=img)
-        button.photo = img   # assign to class variable to resolve problem with bug in `PhotoImage`
+        button=Portrait(root,image=img,number=number) 
+        button.photo = img   # resolve problem with bug in `PhotoImage`
         if number<3:
             R=1
             C=number
@@ -154,12 +203,13 @@ def show_portraits(portraits):
     root.grid_rowconfigure(10, weight=2) # nothing
 
 
+## Changement de fenêtre ##########################################################################
 
 def start():
     ''' This function changes the home window into an image notation window.
 
-        It destroys the text labels, add a label 'selection', changes the command 
-        and the text of 'button_next' and call the function show_portaits().
+        It destroys the text labels, add a label 'selection', changes the command and the text of 'button_next', 
+        places the 'button_recharge' and the 'button_end' and calls the function show_portaits().
     '''
 
     welcome.destroy()
@@ -181,6 +231,35 @@ def start():
     button_end.place(relx=0.8, rely=0.95,anchor='center')
 
 
+def recharge():
+    ''' This function recharges the 6 Portraits displayed.
+
+        If no selection has been done, it chooses 6 new faces from the encoded ones.
+        If selection has been done, it calls again the function new_generation() with the previous selection.
+    '''
+    ind=index.get()
+    global encoded_faces_6
+    global note
+    if ind==1 :
+        encoded_faces_6 = encoded_faces[np.random.choice(encoded_faces.shape[0], 6, replace=False), :]
+    else :
+        encoded_faces_6 = genalg.new_generation(encoded_faces_6,note,1,1,1,6,1)    
+    portraits = AEM.decode_faces(encoded_faces_6)
+    show_portraits(portraits)
+
+
+def choose_portrait():
+    ''' This function allows to select a Portrait as the final portrait.
+        
+        The Portrait's activebackgrounds changes in black.
+        The 'button_next', 'button_recharge' and 'button_end' are disabled.
+    '''
+    for i in range(6):
+        all_buttons[i].configure(activebackground='#345')
+    button_next.configure(state='disabled')
+    button_recharge.configure(state='disabled')
+    button_end.configure(state='disabled')
+
 
 def SaveFile(img):
     ''' This function allows to save an image in .jpeg format.
@@ -200,7 +279,7 @@ def SaveFile(img):
 def end(img):
     ''' This function changes the image notation window into a end window.
 
-        It destroys the grid with the portraits and the combobox, destroys the buttons, 
+        It destroys the grid with the Portraits and the radiobuttons, destroys the buttons, 
         add a label, shows the final portrait and add a button to save it.
     '''
 
@@ -230,31 +309,17 @@ def end(img):
     button_save.place(relx=0.5, rely=0.8,anchor='center')
 
 
-def recharge():
-    ind=index.get()
-    global encoded_faces_6
-    global note
-    if ind==1 :
-        encoded_faces_6 = encoded_faces[np.random.choice(encoded_faces.shape[0], 6, replace=False), :]
-    else :
-        encoded_faces_6 = genalg.new_generation(encoded_faces_6,note,1,1,1,6,1)    
-    portraits = AEM.decode_faces(encoded_faces_6)
-    show_portraits(portraits)
-
-
-def choose_portrait():
-    for i in range(6):
-        all_buttons[i].configure(activebackground='#345')
-    button_next.configure(state='disabled')
-    button_recharge.configure(state='disabled')
-    button_end.configure(state='disabled')
-
-
 def confirm():
     ''' This function allows to confirm the notations.
 
-        It shows an askokcancel box. If 'ok' is selected, it goes to the next portrait selection.
-        If it's the 5th selection, it calls the function end().
+        It shows an askokcancel box :
+            If 'ok' is selected, it goes to the next portrait selection. All notations are collected inside
+            a list of int (note: 0.1, 0.5, 0.9). Then the notations are reset, and it calls the function
+            new_generation() with the 6 faces, the list note and other parameters predefined. Then it calls
+            the function show_portraits() with the new faces generated.
+            If it's the 5th selection, it calls the function end() with the first Portrait of the final selection.
+ 
+            If 'cancel' is selected, it closes the askokcancel box.
 
         Raises
         ------
@@ -311,7 +376,7 @@ welcome.pack()
 welcome.place(relx=0.2, rely=0.2)
 
 intro = Label(root, 
-    text="This software allows you to create a robot portrait from an image bank.\nChoose a notation for each portrait using the combobox.\nYou can choose between 3 notations : 'not at all similar','similar' and 'very similar'\nThere are 10 selections with 6 portraits to note each time.\nBe careful! You can't go back on your selection.",
+    text="This software allows you to create a robot portrait from an image bank.\n\nChoose between 3 notations for each portrait : 'not at all similar','similar' or 'very similar'\nThere are 10 selections with 6 portraits to note each time.\n\nYou can recharge the generated portraits or choose the final one\nat any time by clicking on the corresponding button.\n\nBe careful! You can't go back on your selection.",
     font=("Helvetica", 15))
 intro.pack()
 intro.place(relx=0.5, rely=0.5,anchor='center')
