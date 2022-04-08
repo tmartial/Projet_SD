@@ -164,16 +164,16 @@ def new_generation(parents_pop, fitness, eliteCount, crossoverFraction, Tm, pop_
     new_pop = add_ind(new_pop, np.array(elite_pop), pop_size)
 
     # Crossing over children
-    nb_crossover = int((len(pop)-eliteCount)*crossoverFraction) # number of individuals who are a result of crossing_over
+    nb_crossover = int((pop_size-eliteCount)*crossoverFraction) # number of individuals who are a result of crossing_over
     while (len(new_pop)< (eliteCount + nb_crossover)):
-        i_parents = np.random.choice(pop_size, 2, replace=False, p=fitness/sum(fitness)) 
+        i_parents = np.random.choice(len(pop), 2, replace=False, p=fitness/sum(fitness)) 
         child = mean_genome(pop[i_parents])
         if not np.any(np.all(child == new_pop, axis=1)): # only parents who don't already have a child together are selected
             new_pop = add_ind(new_pop, child, pop_size)
 
     # Fill the new population
     nb_mutated = int(pop_size - eliteCount - nb_crossover) #number of individuals who only undergo mutation
-    i_mutated = np.random.choice(pop_size, nb_mutated, replace=False, p=fitness/sum(fitness))
+    i_mutated = np.random.choice(len(pop), nb_mutated, replace=False, p=fitness/sum(fitness))
     new_pop = add_ind(new_pop, pop[i_mutated], pop_size)
 
     # Apply mutation (noise) on every children except elite children
