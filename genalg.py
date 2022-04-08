@@ -159,8 +159,8 @@ def new_generation(parents_pop, fitness, eliteCount, crossoverFraction, Tm, pop_
     # Elite individuals
     Pc=np.copy(pop)
     index_sort = np.argsort(fitness,axis=0)
-    sorted_pop = Pc[index_sort] # the individuals are sorted by descending fitness order
-    elite_pop = sorted_pop[0:eliteCount] # elite_pop should be a np.array containing np.arrays
+    sorted_pop = Pc[index_sort] # the individuals are sorted by ascending fitness order
+    elite_pop = sorted_pop[::-1][0:eliteCount] # elite_pop should be a np.array containing np.arrays
     new_pop = add_ind(new_pop, np.array(elite_pop), pop_size)
 
     # Crossing over children
