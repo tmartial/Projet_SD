@@ -209,7 +209,7 @@ def start():
     ''' This function changes the home window into an image notation window.
 
         It destroys the text labels, add a label 'selection', changes the command and the text of 'button_next', 
-        places the 'button_recharge' and the 'button_end' and calls the function show_portaits().
+        places and enables the 'button_recharge' and the 'button_end' and calls the function show_portaits().
     '''
 
     welcome.destroy()
@@ -226,8 +226,9 @@ def start():
     button_next.configure(command=confirm)
     button_next.place(relx=0.5, rely=0.95,anchor='center')
 
-    
+    button_recharge.configure(state='normal')
     button_recharge.place(relx=0.2, rely=0.95,anchor='center')
+    button_end.configure(state='normal')
     button_end.place(relx=0.8, rely=0.95,anchor='center')
 
 
@@ -279,34 +280,44 @@ def SaveFile(img):
 def end(img):
     ''' This function changes the image notation window into a end window.
 
-        It destroys the grid with the Portraits and the radiobuttons, destroys the buttons, 
-        add a label, shows the final portrait and add a button to save it.
+        It hides the grid with the Portraits and the radiobuttons, hides the 'button_recharge' and the 'button_end',
+        add a label, shows the final portrait, add a button to save it and modify the 'button_next' into a
+        restart button.
     '''
 
-    button_next.destroy()
-    button_recharge.destroy()
-    button_end.destroy()
+    button_recharge.place_forget()
+    button_end.place_forget()
 
     for button in root.grid_slaves():
         button.grid_forget()
 
-    end = Label(root,text='Here is your portrait !',font=("Helvetica", 30))
-    end.place(relx=0.5, rely=0.2,anchor='center')
+    end_lbl.place(relx=0.5, rely=0.2,anchor='center')
 
     #image=Image.open('./img/jack.jpeg')
     #pic=ImageTk.PhotoImage(image)
     resize_image = image.array_to_img(img).resize((250, 200))
     pic = ImageTk.PhotoImage(resize_image)
-    last_img = Label(root,image=pic)
+    last_img.configure(image=pic)
     last_img.photo=pic
     last_img.place(relx=0.5, rely=0.5,anchor='center')
 
-    button_save = tk.Button(
-        root,
-        text="Save portrait",
-        command = lambda : SaveFile(resize_image)
-    )
+    button_save.configure(command = lambda : SaveFile(resize_image))
     button_save.place(relx=0.5, rely=0.8,anchor='center')
+
+    button_next.configure(text='Restart')
+    button_next.configure(command=lambda:[hide_end(),start()])
+    button_next.configure(state='normal')
+    button_next.place(relx=0.5, rely=0.95,anchor='center')
+
+
+def hide_end():
+    ''' This function allows to hide the end window.
+        
+        It hides the label, the 'button_save' and the 'last_img'.
+    '''
+    end_lbl.place_forget()
+    button_save.place_forget()
+    last_img.place_forget()
 
 
 def confirm():
@@ -407,6 +418,15 @@ button_end = tk.Button(
     text="There is my portrait !",
     command=choose_portrait
 )
+
+button_save = tk.Button(
+        root,
+        text="Save portrait"
+    )
+
+end_lbl = Label(root,text='Here is your portrait !',font=("Helvetica", 30))
+
+last_img = Label(root,image=ImageTk.PhotoImage(image.array_to_img(portraits[0])))
 
 root.mainloop()
 
