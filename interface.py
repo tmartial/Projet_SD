@@ -68,8 +68,10 @@ def on_click(number):
         When a Portrait is selected, its highlightbackground changes in red.
         It shows an askokcancel box :
             If 'ok' is selected, it calls the function end() with the selected Portrait as final portrait. 
-            If 'cancel' is selected, the buttons are reactivated, the highlightbackground of the selected 
-            Portrait and the activebackgrounds are removed.
+            If 'cancel' is selected at index=6, the highlightbackground of the selected Portrait is removed.
+            If 'cancel' is selected at index<6, the buttons are reactivated, the highlightbackground of the 
+            selected Portrait and the activebackgrounds are removed, the 'choose_lbl' is removed and the 
+            'selection' label is displayed.
         
         Parameters
         ----------
@@ -97,12 +99,17 @@ def on_click(number):
         end(portraits[number])
 
     else :
-        for i in range(6):
-            all_buttons[i].configure(activebackground='#d9d9d9')
         all_buttons[number].configure(highlightbackground='#d9d9d9')
-        button_next.configure(state='normal')
-        button_recharge.configure(state='normal')
-        button_end.configure(state='normal')
+        if index.get()<6:
+            for i in range(6):
+                all_buttons[i].configure(activebackground='#d9d9d9')
+            button_next.configure(state='normal')
+            button_recharge.configure(state='normal')
+            button_end.configure(state='normal')
+
+            choose_lbl.grid_forget()
+            selection.configure(text='Selection '+str(index.get())+'/5')
+            selection.grid(row=9, column=1)
 
 
 class Portrait(Button):
@@ -218,8 +225,7 @@ def start():
     show_portraits(portraits)
 
     ind=index.get()
-    selection = Label(root, 
-            text='Selection '+str(ind)+'/5')
+    selection.configure(text='Selection '+str(ind)+'/5')
     selection.grid(row=9, column=1)
 
     button_next.configure(text='Confirm selection')
@@ -227,6 +233,7 @@ def start():
     button_next.place(relx=0.5, rely=0.95,anchor='center')
 
     button_recharge.configure(state='normal')
+    button_recharge.configure(text='No portrait matches...')
     button_recharge.place(relx=0.2, rely=0.95,anchor='center')
     button_end.configure(state='normal')
     button_end.place(relx=0.8, rely=0.95,anchor='center')
@@ -236,7 +243,9 @@ def recharge():
     ''' This function recharges the 6 Portraits displayed.
 
         If no selection has been done, it chooses 6 new faces from the encoded ones.
-        If selection has been done, it calls again the function new_generation() with the previous selection.
+        If selection has been done, it shows an askokcancel box :
+            If 'ok' is selected, it sets the index to '1', it changes the text of the label 'selection'
+            and of the 'button_recharge' and it chooses 6 new faces from the encoded ones.
     '''
     ind=index.get()
     global encoded_faces_6
@@ -244,7 +253,19 @@ def recharge():
     if ind==1 :
         encoded_faces_6 = encoded_faces[np.random.choice(encoded_faces.shape[0], 6, replace=False), :]
     else :
-        encoded_faces_6 = genalg.new_generation(encoded_faces_6,note,1,1,1,6,1)    
+        answer = askokcancel(
+        title='Confirmation',
+        message='Are you sure you want to restart all of your selection?',
+        icon=WARNING)
+
+        if answer:
+            index.set(1)
+            selection.configure(text='Selection '+str(index.get())+'/5')
+            button_recharge.configure(text='No portrait matches...')
+            encoded_faces_6 = encoded_faces[np.random.choice(encoded_faces.shape[0], 6, replace=False), :]
+
+        else:
+            return 0
     portraits = AEM.decode_faces(encoded_faces_6)
     show_portraits(portraits)
 
@@ -254,12 +275,16 @@ def choose_portrait():
         
         The Portrait's activebackgrounds changes in black.
         The 'button_next', 'button_recharge' and 'button_end' are disabled.
+        The label 'selection' is hided and the 'choose_lbl' is displayed.
     '''
     for i in range(6):
         all_buttons[i].configure(activebackground='#345')
     button_next.configure(state='disabled')
     button_recharge.configure(state='disabled')
     button_end.configure(state='disabled')
+
+    selection.grid_forget()
+    choose_lbl.grid(row=9, column=1)
 
 
 def SaveFile(img):
@@ -315,7 +340,7 @@ def reset():
         
         It hides the label, the 'button_save' and the 'last_img'. 
         It chooses 6 new faces from the encoded ones.
-        It set the index to '1'.
+        It sets the index to '1'.
     '''
     end_lbl.place_forget()
     button_save.place_forget()
@@ -335,10 +360,12 @@ def confirm():
         It shows an askokcancel box :
             If 'ok' is selected, it goes to the next portrait selection. All notations are collected inside
             a list of int (note: 0.1, 0.5, 0.9). Then the notations are reset, and it calls the function
-            new_generation() with the 6 faces, the list note and other parameters predefined. Then it calls
-            the function show_portraits() with the new faces generated.
-            If it's the 6th selection, it calls the function end() with the first Portrait of the final selection.
- 
+            new_generation() with the 6 faces and 1 random face from the enoded ones, the list note added
+            with '0.2' and other parameters predefined. Then it calls the function show_portraits() with 
+            the new faces generated.
+            If it's after the first selection, it changes the text of the 'button_recharge'.
+            If it's the 6th selection, it calls the function choose_portrait().
+
             If 'cancel' is selected, it closes the askokcancel box.
 
         Raises
@@ -364,7 +391,7 @@ def confirm():
     if answer:
         ind=index.get()
         ind+=1
-        selection = Label(root,text='Selection '+str(ind)+'/5')
+        selection.configure(text='Selection '+str(ind)+'/5')
         selection.grid(row=9, column=1)
         index.set(ind)
         j=0
@@ -381,10 +408,11 @@ def confirm():
         encoded_faces_6 = genalg.new_generation(encoded_faces_6,note,1,0.8,0.1,6,2.5)
         portraits = AEM.decode_faces(encoded_faces_6)
         show_portraits(portraits)
-
+        
+        if ind>1:
+            button_recharge.configure(text='Restart')
         if ind==6:
-            portraits = AEM.decode_faces(encoded_faces_6)
-            end(portraits[0])
+            choose_portrait()
 
 
 ############
@@ -435,9 +463,11 @@ button_save = tk.Button(
         text="Save portrait"
     )
 
+selection = Label(root,text='Selection '+str(index.get())+'/5')
+choose_lbl = Label(root,text='Choose your portrait by clicking on it',bg='red',fg='white')
 end_lbl = Label(root,text='Here is your portrait !',font=("Helvetica", 30))
-
 last_img = Label(root,image=ImageTk.PhotoImage(image.array_to_img(portraits[0])))
+
 
 root.mainloop()
 
