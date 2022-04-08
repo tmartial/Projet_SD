@@ -83,6 +83,10 @@ selected_lvl2 = tk.StringVar()
 selected_lvl3 = tk.StringVar()
 selected_lvl4 = tk.StringVar()
 selected_lvl5 = tk.StringVar()
+selected_lvl=[selected_lvl0,selected_lvl1,selected_lvl2,selected_lvl3,selected_lvl4,selected_lvl5]
+lvls = (('not at all similar', 0.1),
+         ('similar', 0.5),
+         ('very similar', 0.9))
 index = IntVar(root, value = 1)
 
 ## Fonctions ###################################################################################
@@ -96,10 +100,11 @@ def show_portraits(portraits):
             a population of 6 portraits
     '''
 
-    global all_cb
+    global all_radiob
     global all_buttons
+    global selected_lvl
     all_buttons=[]
-    all_cb=[]
+    all_radiob=[]
     number=0
 
     for number in range(6):
@@ -114,29 +119,40 @@ def show_portraits(portraits):
             R=1
             C=number
         else :
-            R=3
+            R=5
             C=number-3
 
         button.grid(row=R, column=C)
-        lvl = ttk.Combobox(root, textvariable='selected_lvl'+str(number))
-        lvl['values'] = ["not at all similar","similar","very similar"]
-        lvl['state'] = 'readonly'
-        lvl.grid(row=R+1, column=C)
+        for lvl in lvls:
+            r = Radiobutton(root, text=lvl[0], value=lvl[1], variable=selected_lvl[number])
+            r.grid(row=R+1, column=C)
+            R+=1  
+            all_radiob.append(r)
+
+        #lvl = ttk.Combobox(root, textvariable='selected_lvl'+str(number))
+        #lvl['values'] = ["not at all similar","similar","very similar"]
+        #lvl['state'] = 'readonly'
+        #lvl.grid(row=R+1, column=C)
         
         all_buttons.append(button)
-        all_cb.append(lvl)
+        #all_cb.append(lvl)
 
         
     root.grid_columnconfigure(1, weight=1)
     root.grid_columnconfigure(2, weight=1)
     root.grid_columnconfigure(0, weight=1)
-    root.grid_rowconfigure(0, weight=1)
-    root.grid_rowconfigure(1, weight=2)
-    root.grid_rowconfigure(2, weight=1)
-    root.grid_rowconfigure(3, weight=2)
-    root.grid_rowconfigure(4, weight=1)
-    root.grid_rowconfigure(5, weight=1)
-    root.grid_rowconfigure(6, weight=2)
+    root.grid_rowconfigure(0, weight=int(0.3)) # nothing
+    root.grid_rowconfigure(1, weight=1) # images
+    root.grid_rowconfigure(2, weight=int(0.3)) # radiobutton
+    root.grid_rowconfigure(3, weight=int(0.3)) # radiobutton
+    root.grid_rowconfigure(4, weight=int(0.3)) # radiobutton
+    root.grid_rowconfigure(5, weight=1) # images
+    root.grid_rowconfigure(6, weight=int(0.3)) # radiobutton
+    root.grid_rowconfigure(7, weight=int(0.3)) # radiobutton
+    root.grid_rowconfigure(8, weight=int(0.3)) # radiobutton
+    root.grid_rowconfigure(9, weight=1) # selection
+    root.grid_rowconfigure(10, weight=2) # nothing
+
 
 
 def start():
@@ -154,7 +170,7 @@ def start():
     ind=index.get()
     selection = Label(root, 
             text='Selection '+str(ind)+'/10')
-    selection.grid(row=5, column=1)
+    selection.grid(row=9, column=1)
 
     button_next.configure(text='Confirm selection')
     button_next.configure(command=confirm)
@@ -164,35 +180,6 @@ def start():
     button_recharge.place(relx=0.2, rely=0.95,anchor='center')
     button_end.place(relx=0.8, rely=0.95,anchor='center')
 
-
-def notation(list):
-    ''' This function changes the list of notations from strings to integrers.
-
-        - not at all similar = 0.1
-        - similar = 0.5
-        - very similar = 0.9
-        
-        Parameters
-        ----------
-        list : list[str]
-            a list of the notations
-
-        Returns
-        -------
-        list[int]
-            a list of int (0.1, 0.5, 0.9)
-    '''
-
-    i=0
-    for i in range(len(list)):
-        if list[i]=="not at all similar":
-            list[i]=0.1
-        elif list[i]=="similar":
-            list[i]=0.5
-        elif list[i]=="very similar":
-            list[i]=0.9
-
-    return list
 
 
 def SaveFile(img):
@@ -250,7 +237,7 @@ def recharge():
     if ind==1 :
         encoded_faces_6 = encoded_faces[np.random.choice(encoded_faces.shape[0], 6, replace=False), :]
     else :
-        encoded_faces_6 = genalg.new_generation(encoded_faces_6,note,1,1,1,1,6,1)    
+        encoded_faces_6 = genalg.new_generation(encoded_faces_6,note,1,1,1,6,1)    
     portraits = AEM.decode_faces(encoded_faces_6)
     show_portraits(portraits)
 
@@ -274,10 +261,11 @@ def confirm():
         Warning
             If a portrait got no notation
     '''
-
+    global selected_lvl 
+    
     i=0
     for i in range(6):
-        if all_cb[i].get()=="":
+        if selected_lvl[i].get()=="":
             messagebox.showinfo(title='Warning', 
                 message='Please select a notation for each portrait',
                 icon=WARNING)
@@ -292,16 +280,16 @@ def confirm():
         ind=index.get()
         ind+=1
         selection = Label(root,text='Selection '+str(ind)+'/10')
-        selection.grid(row=5, column=1)
+        selection.grid(row=9, column=1)
         index.set(ind)
         j=0
         all_lvl=[]
         for j in range(6):
-            all_lvl.append(all_cb[j].get())
+            all_lvl.append(float(selected_lvl[j].get()))
             global note
-            note = np.array(notation(all_lvl))
-            print("note", note)
-            all_cb[j].set("")
+            note = np.array(all_lvl)
+            selected_lvl[j].set("")
+        print(all_lvl)
         global encoded_faces_6
         encoded_faces_6 = genalg.new_generation(encoded_faces_6,note,1,1,1,6,1)
         portraits = AEM.decode_faces(encoded_faces_6)
