@@ -219,7 +219,7 @@ def start():
 
     ind=index.get()
     selection = Label(root, 
-            text='Selection '+str(ind)+'/10')
+            text='Selection '+str(ind)+'/5')
     selection.grid(row=9, column=1)
 
     button_next.configure(text='Confirm selection')
@@ -305,19 +305,28 @@ def end(img):
     button_save.place(relx=0.5, rely=0.8,anchor='center')
 
     button_next.configure(text='Restart')
-    button_next.configure(command=lambda:[hide_end(),start()])
+    button_next.configure(command=lambda:[reset(),start()])
     button_next.configure(state='normal')
     button_next.place(relx=0.5, rely=0.95,anchor='center')
 
 
-def hide_end():
-    ''' This function allows to hide the end window.
+def reset():
+    ''' This function allows to hide the end window and reset the first 6 Portraits.
         
-        It hides the label, the 'button_save' and the 'last_img'.
+        It hides the label, the 'button_save' and the 'last_img'. 
+        It chooses 6 new faces from the encoded ones.
+        It set the index to '1'.
     '''
     end_lbl.place_forget()
     button_save.place_forget()
     last_img.place_forget()
+
+    global encoded_faces_6
+    global portraits
+    encoded_faces_6 = encoded_faces[np.random.choice(encoded_faces.shape[0], 6, replace=False), :]
+    portraits = AEM.decode_faces(encoded_faces_6)
+
+    index.set(1)
 
 
 def confirm():
@@ -328,7 +337,7 @@ def confirm():
             a list of int (note: 0.1, 0.5, 0.9). Then the notations are reset, and it calls the function
             new_generation() with the 6 faces, the list note and other parameters predefined. Then it calls
             the function show_portraits() with the new faces generated.
-            If it's the 5th selection, it calls the function end() with the first Portrait of the final selection.
+            If it's the 6th selection, it calls the function end() with the first Portrait of the final selection.
  
             If 'cancel' is selected, it closes the askokcancel box.
 
@@ -355,7 +364,7 @@ def confirm():
     if answer:
         ind=index.get()
         ind+=1
-        selection = Label(root,text='Selection '+str(ind)+'/10')
+        selection = Label(root,text='Selection '+str(ind)+'/5')
         selection.grid(row=9, column=1)
         index.set(ind)
         j=0
@@ -371,7 +380,7 @@ def confirm():
         portraits = AEM.decode_faces(encoded_faces_6)
         show_portraits(portraits)
 
-        if ind==5:
+        if ind==6:
             portraits = AEM.decode_faces(encoded_faces_6)
             end(portraits[0])
 
@@ -387,7 +396,7 @@ welcome.pack()
 welcome.place(relx=0.2, rely=0.2)
 
 intro = Label(root, 
-    text="This software allows you to create a robot portrait from an image bank.\n\nChoose between 3 notations for each portrait : 'not at all similar','similar' or 'very similar'\nThere are 10 selections with 6 portraits to note each time.\n\nYou can recharge the generated portraits or choose the final one\nat any time by clicking on the corresponding button.\n\nBe careful! You can't go back on your selection.",
+    text="This software allows you to create a robot portrait from an image bank.\n\nChoose between 3 notations for each portrait : 'not at all similar','similar' or 'very similar'\nThere are 5 selections with 6 portraits to note each time.\n\nYou can recharge the generated portraits or choose the final one\nat any time by clicking on the corresponding button.\n\nBe careful! You can't go back on your selection.",
     font=("Helvetica", 15))
 intro.pack()
 intro.place(relx=0.5, rely=0.5,anchor='center')
