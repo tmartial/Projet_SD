@@ -377,8 +377,8 @@ def confirm():
         print(all_lvl)
         global encoded_faces_6
         encoded_faces_6 = np.append(encoded_faces_6, encoded_faces[np.random.choice(encoded_faces.shape[0], 1, replace=False), :],axis = 0)
-        note = np.append(note, 0.5)
-        encoded_faces_6 = genalg.new_generation(encoded_faces_6,note,1,1,1,6,1)
+        note = np.append(note, 0.2)
+        encoded_faces_6 = genalg.new_generation(encoded_faces_6,note,1,0.8,0.1,6,2.5)
         portraits = AEM.decode_faces(encoded_faces_6)
         show_portraits(portraits)
 
