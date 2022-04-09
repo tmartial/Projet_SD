@@ -124,12 +124,12 @@ def add_ind(pop, ind, pop_size):
         for individual in ind:
             new_pop.append(individual)
     
-    return new_pop
-
-def new_generation(parents_pop, fitness, eliteCount, crossoverFraction, Tm, pop_size, eps):
+    return new_pop       
+def new_generation(parents_pop, fitness_, eliteCount = 1, crossoverFraction = 0.8, pop_size = 6, Tm = 0.1, eps = 2.5, shuffle = False):
     ''' The new_generation function returns a newly generated population when given a parents' population, according to the choices the user made and given rates.
 
-        The new generation is composed of a given number of elite children, crossing-over children and mutated children. 
+        The new generation is composed of a given number of elite children, crossing-over children and mutated parents. 
+        This function does not affect the given data (parents_pop, fitness_)
         
         Parameters
         ----------
@@ -141,12 +141,14 @@ def new_generation(parents_pop, fitness, eliteCount, crossoverFraction, Tm, pop_
             number of individuals with the best fitness values that are guaranteed to survive to the next generation
         crossoverFraction : float between 0 and 1
             fraction of individuals in the new generation, other than elite children, that are created by crossover
-        Tm : float between 0 and 1
-            mutation rate, usually around 1/length of the genome
         pop_size : int
             the number of picture presented to the user at each generation
+        Tm : float between 0 and 1
+            mutation rate, usually around 1/length of the genome
         eps : float
             the noise, amplitude of the mutation
+        shuffle : boolean
+            default is set to False, shuffles the new generated populated if set to True
         
         Returns
         -------
@@ -154,6 +156,7 @@ def new_generation(parents_pop, fitness, eliteCount, crossoverFraction, Tm, pop_
            the generated next generation, containing pop_size genomes
     '''
     pop = np.copy(parents_pop)
+    fitness = np.copy(fitness_)
     new_pop = []
 
     # Elite individuals
@@ -162,6 +165,7 @@ def new_generation(parents_pop, fitness, eliteCount, crossoverFraction, Tm, pop_
     sorted_pop = Pc[index_sort] # the individuals are sorted by ascending fitness order
     elite_pop = sorted_pop[::-1][0:eliteCount] # elite_pop should be a np.array containing np.arrays
     new_pop = add_ind(new_pop, np.array(elite_pop), pop_size)
+    #print("elite", new_pop)
 
     # Crossing over children
     nb_crossover = int((pop_size-eliteCount)*crossoverFraction) # number of individuals who are a result of crossing_over
@@ -170,14 +174,27 @@ def new_generation(parents_pop, fitness, eliteCount, crossoverFraction, Tm, pop_
         child = mean_genome(pop[i_parents])
         if not np.any(np.all(child == new_pop, axis=1)): # only parents who don't already have a child together are selected
             new_pop = add_ind(new_pop, child, pop_size)
+            #print("CO child", new_pop)
 
     # Fill the new population
+    # we now want to select only individuals who are not elite children. 
+    pop = np.delete(pop, index_sort[::-1][0:eliteCount], axis=0)
+    fitness = np.delete(fitness, index_sort[::-1][0:eliteCount], axis=0)
+    
+
     nb_mutated = int(pop_size - eliteCount - nb_crossover) #number of individuals who only undergo mutation
     i_mutated = np.random.choice(len(pop), nb_mutated, replace=False, p=fitness/sum(fitness))
     new_pop = add_ind(new_pop, pop[i_mutated], pop_size)
+    #print("filled", new_pop)
 
     # Apply mutation (noise) on every children except elite children
     new_pop[eliteCount:] = noise(new_pop[eliteCount:], eps, Tm)
+    #print("mutated", new_pop)
+
+    if shuffle:
+        #print("before shuffling", new_pop)
+        rd.shuffle(new_pop)
+        #print("shuffled", new_pop)
 
     return np.array(new_pop)
 
@@ -188,7 +205,7 @@ def new_generation(parents_pop, fitness, eliteCount, crossoverFraction, Tm, pop_
 #print(help(mutation))
 if __name__=="__main__":
     #pop = [np.array(rd.choices([-2,2],k=10)),np.array(rd.choices([-1,1],k=10))]
-    #pop2 = np.array([np.array(rd.choices([-3,3],k=10)),np.array(rd.choices([-4,4],k=10)),np.array(rd.choices([-6,6],k=10)),np.array(rd.choices([-9,9],k=10)),np.array(rd.choices([-5,5],k=10))]) #elitepop
+    pop2 = np.array([np.array(rd.choices([-3,3],k=10)),np.array(rd.choices([-4,4],k=10)),np.array(rd.choices([-6,6],k=10)),np.array(rd.choices([-9,9],k=10)),np.array(rd.choices([-5,5],k=10))]) #elitepop
     #pop2 = [np.array(rd.choices([-3,3],k=10)),np.array(rd.choices([-4,4],k=10)),np.array(rd.choices([-6,6],k=10)),np.array(rd.choices([-9,9],k=10)),np.array(rd.choices([-5,5],k=10))] #elitepop
     #pop3 = rd.choices(pop2, k=2) # parents
     #pop4 = rd.choices(pop2, k=2) #[np.array([rd.choices([-5,5],k=10)])] # one mutation
@@ -200,9 +217,8 @@ if __name__=="__main__":
     fitness = np.array([0.9 , 0.5, 0.1, 0.1, 0.9])
     eliteCount = 1
     crossoverFraction = 0.8
-    Tc = 0.3
     Tm = 0.1
-    pop_size = 5
+    pop_size = 6
     eps = 20
 
     #L = np.copy(pop2[1])
@@ -217,9 +233,9 @@ if __name__=="__main__":
     #pop2mut = noise(Tm, pop2, eps)
     
     #print(pop2.shape[0])
-    #new_pop = new_generation(pop2, fitness, eliteCount, crossoverFraction, Tc, Tm, pop_size, eps)
-    #print("old_pop\n", pop2)
-    #print("new_pop\n", new_pop)
+    new_pop = new_generation(pop2, fitness, eliteCount, crossoverFraction, pop_size, Tm, eps, True)
+    print("old_pop\n", pop2)
+    print("new_pop\n", new_pop)
     #print(len(pop2))
     #print(type(pop2[0]))
     #print(type(pop2[0,0]))
@@ -245,12 +261,12 @@ if __name__=="__main__":
     #print("crossing over:\n",popmc)
    # print(mean_genome(popmc, 0.5))
 
-    pop = [np.array(rd.choices([-1.,1.],k=10)),np.array(rd.choices([-1.,1.],k=10))]
-    a = np.array([np.array(rd.choices([-2.,2.],k=10)),np.array(rd.choices([-2.,2.],k=10))])
-    print("pop", pop)
-    print("a", a)
-    print("add", add_ind(pop, a, 6))
-    print(help(noise))
+    #pop = [np.array(rd.choices([-1.,1.],k=10)),np.array(rd.choices([-1.,1.],k=10))]
+    #a = np.array([np.array(rd.choices([-2.,2.],k=10)),np.array(rd.choices([-2.,2.],k=10))])
+    #print("pop", pop)
+    #print("a", a)
+    #print("add", add_ind(pop, a, 6))
+    #print(help(noise))
 
    
    
