@@ -421,15 +421,15 @@ def confirm():
 
 welcome = Label(root, 
     text='Welcome to the EETO Project !',
-    font=("Helvetica", 30))
+    font=("Helvetica", 35))
 welcome.pack()
-welcome.place(relx=0.2, rely=0.2)
+welcome.place(relx=0.5, rely=0.1, anchor='center')
 
 intro = Label(root, 
-    text="This software allows you to create a robot portrait from an image bank.\n\nChoose between 3 notations for each portrait : 'not at all similar','similar' or 'very similar'\nThere are 5 selections with 6 portraits to note each time.\n\nYou can recharge the generated portraits or choose the final one\nat any time by clicking on the corresponding button.\n\nBe careful! You can't go back on your selection.",
-    font=("Helvetica", 15))
+    text="This software allows you to create a photofit, or identikit picture (portait-robot)\nfrom portraits generated from an image bank.\n\n6 portraits will be shown to you.\nChoose between 3 notations for each portrait : 'not at all similar','similar' or 'very similar'.\n\nOnce you have graded all the presented portraits, click on the 'Confirm selection'\nbutton on the bottom of the screen to generate new portaits.\n\nThere will be 5 rounds of selection with 6 portraits to grade each time.\n\nIf you are not satisfied by the portraits presented, you can start again from the beginning\nby clicking on the button 'Restart' on the bottom left of the screen.\n\nIf you see an portrait that ressembles greatly the person you are thinking of,\nyou can select it by clicking on the button 'There is my portrait!' at the bottom right of the screen.\n\nBe careful! You can't go back on your selection.\n\nTo begin the identification, click on the button below.\n\n",
+    font=("Helvetica", 20))
 intro.pack()
-intro.place(relx=0.5, rely=0.5,anchor='center')
+intro.place(relx=0.5, rely=0.55,anchor='center')
 
 
 # Charge les 400 images encodées
@@ -444,7 +444,7 @@ button_next = tk.Button(
     text="Start identification",
     command=start
 )
-button_next.place(relx=0.5, rely=0.8,anchor='center')
+button_next.place(relx=0.5, rely=0.9,anchor='center')
 
 button_recharge = tk.Button(
     root,
