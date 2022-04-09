@@ -4,7 +4,7 @@
 
 ### Project's description
 
-Our software is a tool that can be used to elaborate a "Portait-robot", based on the similarity between given pictures and the witness memories.
+Our software is a tool that can be used by the police to elaborate a photofit, or identikit picture (Portait-robot), based on the similarity between given pictures and the witness memories, of a person sought for a crime.
 
 ### Installation instructions 
 
