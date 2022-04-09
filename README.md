@@ -14,7 +14,7 @@ You have to refer to the section that corresponds to your work environments (Lin
 Please refer to requirements.txt for more detailed instructions.
 - `pip install numpy` version 1.22.3
 - `pip install Pillow` version 9.1.0
-- `pip install tk` version0.1.0
+- `pip install tk` version 0.1.0
 - `pip install keras` version 2.8.0
 - `pip install python-gettext` version 4.0
 - `pip install tensorflow` version 2.8.0
