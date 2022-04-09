@@ -1,0 +1,365 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>genalg &#8212; Projet_EETO 0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for genalg</h1><div class="highlight"><pre>
+<span></span><span class="c1">######################</span>
+<span class="c1">##### Librairies #####</span>
+<span class="c1">######################</span>
+
+<span class="kn">import</span> <span class="nn">random</span> <span class="k">as</span> <span class="nn">rd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1">##############################</span>
+<span class="c1">##### Mutation functions #####</span>
+<span class="c1">##############################</span>
+
+<div class="viewcode-block" id="noise"><a class="viewcode-back" href="../genalg.html#genalg.noise">[docs]</a><span class="k">def</span> <span class="nf">noise</span><span class="p">(</span><span class="n">pop</span><span class="p">,</span> <span class="n">eps</span><span class="p">,</span> <span class="n">Tm</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; The noise function adds noise to genes of the population&#39;s indivuals at rate Tm.</span>
+
+<span class="sd">        The noise added is of amplitude eps multiplied by a random sample from the standard normal distribution.</span>
+<span class="sd">        It does not directly modify the given population (np.array).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pop : np.array</span>
+<span class="sd">            the selected individuals, whose genomes are lists of floats</span>
+<span class="sd">        eps : float </span>
+<span class="sd">            the range, amplitude of the mutation</span>
+<span class="sd">        Tm : float between 0 and 1</span>
+<span class="sd">            the mutation rate, usually equal to the inverse of the length of an individual&#39;s genome</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        mut_pop : np.array</span>
+<span class="sd">            the population whose individuals underwent mutation</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; pop = np.array([np.array(rd.choices([-1.,1.],k=10)),np.array(rd.choices([-1.,1.],k=10))])</span>
+<span class="sd">        &gt;&gt;&gt; pop</span>
+<span class="sd">        array([[ 1., -1.,  1., -1.,  1.,  1.,  1., -1.,  1.,  1.],</span>
+<span class="sd">               [ 1.,  1., -1., -1.,  1.,  1., -1., -1., -1., -1.]])</span>
+<span class="sd">        &gt;&gt;&gt; noise(pop, 5, 0.5)</span>
+<span class="sd">        array([[ 5.78251086, -1.        ,  1.74370587, -1.        ,  0.31577936,</span>
+<span class="sd">                 1.        ,  1.        , -1.        ,  1.04432812,  1.83107639],</span>
+<span class="sd">               [ 2.30186641,  1.        , -1.        , -1.        ,  5.43954382,</span>
+<span class="sd">                 1.        , -1.        , -1.        , -1.        ,  2.20666446]])</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">mut_pop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">pop</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i_genome</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">mut_pop</span><span class="p">,</span><span class="mi">0</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">i_gene</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">mut_pop</span><span class="p">,</span><span class="mi">1</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">rd</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">Tm</span><span class="p">:</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="n">eps</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">mut_pop</span><span class="p">[</span><span class="n">i_genome</span><span class="p">][</span><span class="n">i_gene</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">mut_pop</span><span class="p">[</span><span class="n">i_genome</span><span class="p">][</span><span class="n">i_gene</span><span class="p">]</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mut_pop</span></div>
+
+<div class="viewcode-block" id="mean_genome"><a class="viewcode-back" href="../genalg.html#genalg.mean_genome">[docs]</a><span class="k">def</span> <span class="nf">mean_genome</span><span class="p">(</span><span class="n">parents</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; The mean_genome function returns the mean of pairs of genomes.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parents : np.array</span>
+<span class="sd">            the selected individuals, whose genomes are np.arrays of ints</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        mean_pop : np.array</span>
+<span class="sd">            the population of mean individuals</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; parents = np.array([np.array(rd.choices([-1.,1.],k=10)),np.array(rd.choices([-3.,3.],k=10))])</span>
+<span class="sd">        &gt;&gt;&gt; parents</span>
+<span class="sd">        array([[-1.,  1., -1.,  1.,  1., -1., -1.,  1.,  1., -1.],</span>
+<span class="sd">               [ 3.,  3.,  3.,  3., -3.,  3.,  3.,  3., -3., -3.]])</span>
+<span class="sd">        &gt;&gt;&gt; mean_genome(parents)</span>
+<span class="sd">        array([ 1.,  2.,  1.,  2., -1.,  1.,  1.,  2., -1., -2.])</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">parents</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+<span class="c1">###############################</span>
+<span class="c1">##### POPULATION FUNCTION #####</span>
+<span class="c1">###############################</span>
+
+<div class="viewcode-block" id="add_ind"><a class="viewcode-back" href="../genalg.html#genalg.add_ind">[docs]</a><span class="k">def</span> <span class="nf">add_ind</span><span class="p">(</span><span class="n">pop</span><span class="p">,</span> <span class="n">ind</span><span class="p">,</span> <span class="n">pop_size</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; The add_ind function adds a np.array to a list of np.arrays.</span>
+<span class="sd">        </span>
+<span class="sd">        The np.array to be added to the list can contain one or more genomes. </span>
+<span class="sd">        How those genomes are added to the given list depends on their number, especially if there is 1 or at least 2 genomes.</span>
+<span class="sd">        This function does not directly modify the given population (np.array).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pop : list</span>
+<span class="sd">            a population, which can contain genomes as np.arrays</span>
+<span class="sd">        ind : np.array</span>
+<span class="sd">            a population, which contains one or more genomes as np.arrays</span>
+<span class="sd">        pop_size : int</span>
+<span class="sd">            the maximum number of individuals of the population</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        new_pop : list</span>
+<span class="sd">            the newly created population which contains the genomes of pop and ind</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; pop = [np.array(rd.choices([-1.,1.],k=5)),np.array(rd.choices([-1.,1.],k=5))]</span>
+<span class="sd">        &gt;&gt;&gt; pop</span>
+<span class="sd">        array([[ 1.,  1., -1., -1., -1.],</span>
+<span class="sd">               [ 1., -1.,  1., -1., -1.]])</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; a = np.array([np.array(rd.choices([-2.,2.],k=5)),np.array(rd.choices([-2.,2.],k=5))])</span>
+<span class="sd">        &gt;&gt;&gt; a</span>
+<span class="sd">        array([[-2., -2.,  2., -2.,  2.],</span>
+<span class="sd">               [ 2., -2., -2.,  2., -2.]])</span>
+<span class="sd">        &gt;&gt;&gt; add_ind(pop, a, 6)</span>
+<span class="sd">        [array([ 1., -1.,  1.,  1.,  1.]), array([ 1.,  1., -1., -1.,  1.]), array([-2.,  2., -2., -2.,  2.]), array([-2.,  2., -2.,  2., -2.])]</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; b = np.array(rd.choices([-4.,4.],k=10))</span>
+<span class="sd">        &gt;&gt;&gt; b</span>
+<span class="sd">        array([ 4.,  4.,  4.,  4., -4.])</span>
+<span class="sd">        &gt;&gt;&gt;add_ind(pop, b, 6)</span>
+<span class="sd">        [array([ 1.,  1., -1., -1., -1.]), array([ 1., -1.,  1., -1., -1.]), array([ 4.,  4.,  4.,  4., -4.])]</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># There is a maximum of pop_size individuals we want to add</span>
+    <span class="c1"># If the length of the ind is superior to pop_size, it means what&#39;s inside is the genes (64) of the individual and not a np.array reprensenting the genome</span>
+    <span class="n">new_pop</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span><span class="o">&gt;=</span><span class="n">pop_size</span><span class="p">):</span>    <span class="c1"># In this cas, there is one individual in ind</span>
+        <span class="n">new_pop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+    
+    <span class="k">else</span> <span class="p">:</span>                      <span class="c1"># In this case, there are multiple individuals in ind</span>
+        <span class="k">for</span> <span class="n">individual</span> <span class="ow">in</span> <span class="n">ind</span><span class="p">:</span>
+            <span class="n">new_pop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">individual</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">new_pop</span>       </div>
+<div class="viewcode-block" id="new_generation"><a class="viewcode-back" href="../genalg.html#genalg.new_generation">[docs]</a><span class="k">def</span> <span class="nf">new_generation</span><span class="p">(</span><span class="n">parents_pop</span><span class="p">,</span> <span class="n">fitness_</span><span class="p">,</span> <span class="n">eliteCount</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">crossoverFraction</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span> <span class="n">pop_size</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">Tm</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">eps</span> <span class="o">=</span> <span class="mf">2.5</span><span class="p">,</span> <span class="n">shuffle</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; The new_generation function returns a newly generated population when given a parents&#39; population, according to the choices the user made and given rates.</span>
+
+<span class="sd">        The new generation is composed of a given number of elite children, crossing-over children and mutated parents. </span>
+<span class="sd">        This function does not affect the given data (parents_pop, fitness_)</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pop : np.array</span>
+<span class="sd">            a population of size pop_size, whose genomes are np.arrays</span>
+<span class="sd">        fitness : np.array</span>
+<span class="sd">            a np.array containing the fitness values of the individuals of the population, in the same order. The fitness is determined by the user choices.</span>
+<span class="sd">        eliteCount : int</span>
+<span class="sd">            number of individuals with the best fitness values that are guaranteed to survive to the next generation</span>
+<span class="sd">        crossoverFraction : float between 0 and 1</span>
+<span class="sd">            fraction of individuals in the new generation, other than elite children, that are created by crossover</span>
+<span class="sd">        pop_size : int</span>
+<span class="sd">            the number of picture presented to the user at each generation</span>
+<span class="sd">        Tm : float between 0 and 1</span>
+<span class="sd">            mutation rate, usually around 1/length of the genome</span>
+<span class="sd">        eps : float</span>
+<span class="sd">            the noise, amplitude of the mutation</span>
+<span class="sd">        shuffle : boolean</span>
+<span class="sd">            default is set to False, shuffles the new generated populated if set to True</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        new_pop : np.array</span>
+<span class="sd">           the generated next generation, containing pop_size genomes</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">pop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">parents_pop</span><span class="p">)</span>
+    <span class="n">fitness</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">fitness_</span><span class="p">)</span>
+    <span class="n">new_pop</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Elite individuals</span>
+    <span class="n">Pc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">pop</span><span class="p">)</span>
+    <span class="n">index_sort</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">fitness</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">sorted_pop</span> <span class="o">=</span> <span class="n">Pc</span><span class="p">[</span><span class="n">index_sort</span><span class="p">]</span> <span class="c1"># the individuals are sorted by ascending fitness order</span>
+    <span class="n">elite_pop</span> <span class="o">=</span> <span class="n">sorted_pop</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">eliteCount</span><span class="p">]</span> <span class="c1"># elite_pop should be a np.array containing np.arrays</span>
+    <span class="n">new_pop</span> <span class="o">=</span> <span class="n">add_ind</span><span class="p">(</span><span class="n">new_pop</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">elite_pop</span><span class="p">),</span> <span class="n">pop_size</span><span class="p">)</span>
+    <span class="c1">#print(&quot;elite&quot;, new_pop)</span>
+
+    <span class="c1"># Crossing over children</span>
+    <span class="n">nb_crossover</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">pop_size</span><span class="o">-</span><span class="n">eliteCount</span><span class="p">)</span><span class="o">*</span><span class="n">crossoverFraction</span><span class="p">)</span> <span class="c1"># number of individuals who are a result of crossing_over</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">new_pop</span><span class="p">)</span><span class="o">&lt;</span> <span class="p">(</span><span class="n">eliteCount</span> <span class="o">+</span> <span class="n">nb_crossover</span><span class="p">)):</span>
+        <span class="n">i_parents</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pop</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">fitness</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">fitness</span><span class="p">))</span> 
+        <span class="n">child</span> <span class="o">=</span> <span class="n">mean_genome</span><span class="p">(</span><span class="n">pop</span><span class="p">[</span><span class="n">i_parents</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">child</span> <span class="o">==</span> <span class="n">new_pop</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)):</span> <span class="c1"># only parents who don&#39;t already have a child together are selected</span>
+            <span class="n">new_pop</span> <span class="o">=</span> <span class="n">add_ind</span><span class="p">(</span><span class="n">new_pop</span><span class="p">,</span> <span class="n">child</span><span class="p">,</span> <span class="n">pop_size</span><span class="p">)</span>
+            <span class="c1">#print(&quot;CO child&quot;, new_pop)</span>
+
+    <span class="c1"># Fill the new population</span>
+    <span class="c1"># we now want to select only individuals who are not elite children. </span>
+    <span class="n">pop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">pop</span><span class="p">,</span> <span class="n">index_sort</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">eliteCount</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">fitness</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">fitness</span><span class="p">,</span> <span class="n">index_sort</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">eliteCount</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    
+
+    <span class="n">nb_mutated</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">pop_size</span> <span class="o">-</span> <span class="n">eliteCount</span> <span class="o">-</span> <span class="n">nb_crossover</span><span class="p">)</span> <span class="c1">#number of individuals who only undergo mutation</span>
+    <span class="n">i_mutated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pop</span><span class="p">),</span> <span class="n">nb_mutated</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">fitness</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">fitness</span><span class="p">))</span>
+    <span class="n">new_pop</span> <span class="o">=</span> <span class="n">add_ind</span><span class="p">(</span><span class="n">new_pop</span><span class="p">,</span> <span class="n">pop</span><span class="p">[</span><span class="n">i_mutated</span><span class="p">],</span> <span class="n">pop_size</span><span class="p">)</span>
+    <span class="c1">#print(&quot;filled&quot;, new_pop)</span>
+
+    <span class="c1"># Apply mutation (noise) on every children except elite children</span>
+    <span class="n">new_pop</span><span class="p">[</span><span class="n">eliteCount</span><span class="p">:]</span> <span class="o">=</span> <span class="n">noise</span><span class="p">(</span><span class="n">new_pop</span><span class="p">[</span><span class="n">eliteCount</span><span class="p">:],</span> <span class="n">eps</span><span class="p">,</span> <span class="n">Tm</span><span class="p">)</span>
+    <span class="c1">#print(&quot;mutated&quot;, new_pop)</span>
+
+    <span class="k">if</span> <span class="n">shuffle</span><span class="p">:</span>
+        <span class="c1">#print(&quot;before shuffling&quot;, new_pop)</span>
+        <span class="n">rd</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">new_pop</span><span class="p">)</span>
+        <span class="c1">#print(&quot;shuffled&quot;, new_pop)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">new_pop</span><span class="p">)</span></div>
+
+<span class="c1">#################</span>
+<span class="c1">##### MAIN ######</span>
+<span class="c1">#################</span>
+
+<span class="c1">#print(help(mutation))</span>
+<span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1">#pop = [np.array(rd.choices([-2,2],k=10)),np.array(rd.choices([-1,1],k=10))]</span>
+    <span class="n">pop2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rd</span><span class="o">.</span><span class="n">choices</span><span class="p">([</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">)),</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rd</span><span class="o">.</span><span class="n">choices</span><span class="p">([</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span><span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">)),</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rd</span><span class="o">.</span><span class="n">choices</span><span class="p">([</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span><span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">)),</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rd</span><span class="o">.</span><span class="n">choices</span><span class="p">([</span><span class="o">-</span><span class="mi">9</span><span class="p">,</span><span class="mi">9</span><span class="p">],</span><span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">)),</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rd</span><span class="o">.</span><span class="n">choices</span><span class="p">([</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span><span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">))])</span> <span class="c1">#elitepop</span>
+    <span class="c1">#pop2 = [np.array(rd.choices([-3,3],k=10)),np.array(rd.choices([-4,4],k=10)),np.array(rd.choices([-6,6],k=10)),np.array(rd.choices([-9,9],k=10)),np.array(rd.choices([-5,5],k=10))] #elitepop</span>
+    <span class="c1">#pop3 = rd.choices(pop2, k=2) # parents</span>
+    <span class="c1">#pop4 = rd.choices(pop2, k=2) #[np.array([rd.choices([-5,5],k=10)])] # one mutation</span>
+    <span class="c1">#pop4 = [np.array([])]</span>
+    <span class="c1">#print(&quot;pop&quot;, pop)</span>
+    <span class="c1">#print(&quot;\npop2&quot;, pop2)</span>
+    <span class="c1">#print(&quot;\npop3&quot;, pop3)</span>
+    <span class="c1">#print(&quot;\npop4&quot;, pop4)</span>
+    <span class="n">fitness</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.9</span> <span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">])</span>
+    <span class="n">eliteCount</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">crossoverFraction</span> <span class="o">=</span> <span class="mf">0.8</span>
+    <span class="n">Tm</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">pop_size</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="mi">20</span>
+
+    <span class="c1">#L = np.copy(pop2[1])</span>
+    <span class="c1">#K = np.array(rd.choices([-10,10],k=10))</span>
+
+    <span class="c1">#print(&quot;pop&quot;, pop2)</span>
+    <span class="c1">#print(&quot;L&quot;,L)</span>
+    <span class="c1">#print(&quot;K&quot;, K)</span>
+    <span class="c1">#print(&quot;L in pop&quot;, np.any(np.all(L == pop2, axis=1)))</span>
+    <span class="c1">#print(&quot;K in pop&quot;,np.any(np.all(K == pop2, axis=1)))</span>
+    
+    <span class="c1">#pop2mut = noise(Tm, pop2, eps)</span>
+    
+    <span class="c1">#print(pop2.shape[0])</span>
+    <span class="n">new_pop</span> <span class="o">=</span> <span class="n">new_generation</span><span class="p">(</span><span class="n">pop2</span><span class="p">,</span> <span class="n">fitness</span><span class="p">,</span> <span class="n">eliteCount</span><span class="p">,</span> <span class="n">crossoverFraction</span><span class="p">,</span> <span class="n">pop_size</span><span class="p">,</span> <span class="n">Tm</span><span class="p">,</span> <span class="n">eps</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;old_pop</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">pop2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;new_pop</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">new_pop</span><span class="p">)</span>
+    <span class="c1">#print(len(pop2))</span>
+    <span class="c1">#print(type(pop2[0]))</span>
+    <span class="c1">#print(type(pop2[0,0]))</span>
+    <span class="c1">#print(&quot;\n&quot;)</span>
+    <span class="c1">#print(len(new_pop))</span>
+    <span class="c1">#print(type(new_pop[0]))</span>
+    <span class="c1">#print(type(new_pop[0,0]))</span>
+
+    <span class="c1">#pop_test1 = add_ind(pop, pop2, 6)</span>
+    <span class="c1">#print(&quot;\npoptest1&quot;, pop_test1)</span>
+    
+    <span class="c1">#pop_test2 = add_ind(pop, pop3, 6)</span>
+    <span class="c1">#print(&quot;\npoptest2&quot;, pop_test2)</span>
+    <span class="c1">#print(len(pop3))</span>
+    <span class="c1">#pop_test3 = add_ind(pop, pop4, 6)</span>
+    <span class="c1">#print(&quot;\npoptest3&quot;, pop_test3)</span>
+    <span class="c1">#print(&#39;\n&#39;,pop4)</span>
+    
+    <span class="c1">#print(pop,&#39;\n&#39;)</span>
+    <span class="c1">#popm = noise(0.5, pop, 5)</span>
+    <span class="c1">#print(&quot;noise:\n&quot;,popm,&#39;\n&#39;)</span>
+    <span class="c1">#popmc = crossing_over2(pop, 0)</span>
+    <span class="c1">#print(&quot;crossing over:\n&quot;,popmc)</span>
+   <span class="c1"># print(mean_genome(popmc, 0.5))</span>
+
+    <span class="c1">#pop = [np.array(rd.choices([-1.,1.],k=10)),np.array(rd.choices([-1.,1.],k=10))]</span>
+    <span class="c1">#a = np.array([np.array(rd.choices([-2.,2.],k=10)),np.array(rd.choices([-2.,2.],k=10))])</span>
+    <span class="c1">#print(&quot;pop&quot;, pop)</span>
+    <span class="c1">#print(&quot;a&quot;, a)</span>
+    <span class="c1">#print(&quot;add&quot;, add_ind(pop, a, 6))</span>
+    <span class="c1">#print(help(noise))</span>
+
+   
+   
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../master_document.html">Projet_EETO</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Projet_SD</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../master_document.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, EETO.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

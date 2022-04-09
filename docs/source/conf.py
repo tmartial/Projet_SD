@@ -14,14 +14,14 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../package'))
+sys.path.insert(0, os.path.abspath('../..'))
 
 
 # -- Project information -----------------------------------------------------
 
-project = 'Projet_EETOS'
-copyright = '2022, EETOS'
-author = 'EETOS'
+project = 'Projet_EETO'
+copyright = '2022, EETO'
+author = 'EETO'
 
 # The short X.Y version
 version = ''

@@ -1,7 +1,7 @@
-monmodule module
+AEmodules module
 ================
 
-.. automodule:: monmodule
+.. automodule:: AEmodules
     :members:
     :undoc-members:
     :show-inheritance:
