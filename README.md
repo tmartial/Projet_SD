@@ -1,4 +1,4 @@
-# Projet_SD
+# Projet_SD : EETO 
 
 ## Github for the Software Development project (INSA Lyon, 4BIM, grp6)
 
