@@ -1,0 +1,27 @@
+#from [Windows' Invite de Commande],
+#in the directory you chose to install the software
+#copy and paste the following lines, click enter after each step
+
+#1
+git clone https://github.com/tmartial/Projet_SD.git
+
+#2
+cd Projet_SD
+
+#3 : Create a virtual environment to run the software
+python3 -m venv myvenv
+
+#4 : activate this virtual environment
+. myvenv/bin/activate
+
+#5 : copy and paste the following block
+[py -m pip install numpy==1.22.3
+py -m pip install Pillow==9.1.0
+py -m pip install tk==0.1.0
+py -m pip install keras==2.8.0
+py -m pip install python-gettext==4.0
+py -m pip install tensorflow==2.8.0
+py -m pip install matplotlib==3.5.1]
+
+#6 : Run the software
+[py interface.py]
