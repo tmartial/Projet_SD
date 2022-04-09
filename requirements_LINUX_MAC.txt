@@ -1,4 +1,4 @@
-#from [Windows' Invite de Commande],
+#open a terminal,
 #in the directory you chose to install the software
 #copy and paste the following lines, click enter after each step
 
@@ -15,13 +15,13 @@ python3 -m venv myvenv
 . myvenv/bin/activate
 
 #5 : copy and paste the following block
-[py -m pip install numpy==1.22.3
-py -m pip install Pillow==9.1.0
-py -m pip install tk==0.1.0
-py -m pip install keras==2.8.0
-py -m pip install python-gettext==4.0
-py -m pip install tensorflow==2.8.0
-py -m pip install matplotlib==3.5.1]
+python -m pip install numpy==1.22.3
+python -m pip install Pillow==9.1.0
+python -m pip install tk==0.1.0
+python -m pip install keras==2.8.0
+python -m pip install python-gettext==4.0
+python -m pip install tensorflow==2.8.0
+python -m pip install matplotlib==3.5.1
 
 #6 : Run the software
-[py interface.py]
+python interface.py

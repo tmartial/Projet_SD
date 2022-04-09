@@ -86,7 +86,7 @@ def on_click(number):
     if button_end['state']=='normal':
         return 0
 
-    print(all_buttons[number])
+    #print(all_buttons[number])
     all_buttons[number].configure(highlightbackground='red')
 
     answer = askokcancel(
@@ -401,7 +401,7 @@ def confirm():
             global note
             note = np.array(all_lvl)
             selected_lvl[j].set("")
-        print(all_lvl)
+        #print(all_lvl)
         global encoded_faces_6
         encoded_faces_6 = np.append(encoded_faces_6, encoded_faces[np.random.choice(encoded_faces.shape[0], 1, replace=False), :],axis = 0)
         note = np.append(note, 0.2)
