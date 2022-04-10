@@ -7,9 +7,12 @@
 Our software is a tool that can be used by the police to elaborate a photofit, or identikit picture (Portait-robot), based on the similarity between given pictures and the witness memories, of a person sought for a crime.
 
 ### Installation instructions 
-Follow the tutorial " ... " to install the software and the proper environment to use it.
+Follow the tutorial " TUTORIAL_EETO_install_and_use.pdf " to install the software and the proper environment to use it.
 You have to refer to the section that corresponds to your work environments (Linus/Mac or Windows)
 If you already have the required packages installed on your machine, you don't have to go through the virtual environment steps.
+
+### How to use the EETO software 
+You can refer to the same tutorial " TUTORIAL_EETO_install_and_use.pdf " as for the installation instructions, starting from page 4.
 
 ### Dependencies
 Please refer to requirements.txt for more detailed instructions.
@@ -30,6 +33,10 @@ They are a subset of CelebA database (http://mmlab.ie.cuhk.edu.hk/projects/Celeb
 #### - How much space do I need to install the software ?
 
 The GitHub content represents a bit more than 100Mo, and the virtual environment that you will generate to run the app is approximately 1Go.
+
+#### - Where can I suggest improvement ideas ?
+
+You can contact the authors, using the addresses below, and mentionning "EETO project" in object.
 
 ### TO DO 
 Next release functionalities :
