@@ -103,6 +103,11 @@ def on_click(number):
         if index.get()<6:
             for i in range(6):
                 all_buttons[i].configure(activebackground='#d9d9d9')
+                all_radiob[i].configure(state='normal')
+                all_radiob[i+3].configure(state='normal')
+                all_radiob[i+6].configure(state='normal')
+                all_radiob[i+9].configure(state='normal')
+                all_radiob[i+12].configure(state='normal')
             button_next.configure(state='normal')
             button_recharge.configure(state='normal')
             button_end.configure(state='normal')
@@ -279,6 +284,11 @@ def choose_portrait():
     '''
     for i in range(6):
         all_buttons[i].configure(activebackground='#345')
+        all_radiob[i].configure(state='disabled')
+        all_radiob[i+3].configure(state='disabled')
+        all_radiob[i+6].configure(state='disabled')
+        all_radiob[i+9].configure(state='disabled')
+        all_radiob[i+12].configure(state='disabled')
     button_next.configure(state='disabled')
     button_recharge.configure(state='disabled')
     button_end.configure(state='disabled')
