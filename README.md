@@ -30,6 +30,8 @@ They are a subset of CelebA database (http://mmlab.ie.cuhk.edu.hk/projects/Celeb
 Next release functionalities :
 - Pre-select the attributes of your portrait ! For a faster and more accurate selection, the software will ask you to choose a few characteristics, in order to show already filtered faces.
 - Are you feeling lost during the identification ? Click on the Help Button to see the tutorial once again, at any time. 
+- Visualize the selection face portraits with an improved resolution.
+- You don't really feel comfortable with using a terminal ? Run the software easily, with no command line requirements.
 
 ### Authors:
 For bug reports and feedback do not hesitate to contact the authors:
@@ -39,11 +41,5 @@ For bug reports and feedback do not hesitate to contact the authors:
 - Emma Molière: emma.moliere AT insa-lyon.fr
 - Ombeline Trancart: ombeline.trancart AT insa-lyon.fr
 
-### ReadMe content (Sergio's class)
-- Two audiences : developers and users 
-- What does the program solves ?
-- Installation instructions
-- FAQ section 
-- Contribute section (issue tracker link, source code link)
-- TODO section : functionalities to be added
+
 
