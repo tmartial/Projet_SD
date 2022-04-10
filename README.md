@@ -9,6 +9,7 @@ Our software is a tool that can be used by the police to elaborate a photofit, o
 ### Installation instructions 
 Follow the tutorial " ... " to install the software and the proper environment to use it.
 You have to refer to the section that corresponds to your work environments (Linus/Mac or Windows)
+If you already have the required packages installed on your machine, you don't have to go through the virtual environment steps.
 
 ### Dependencies
 Please refer to requirements.txt for more detailed instructions.
@@ -25,6 +26,10 @@ Please refer to requirements.txt for more detailed instructions.
 ####  - Where do the initial images come from ?
 
 They are a subset of CelebA database (http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html).
+
+#### - How much space do I need to install the software ?
+
+The GitHub content represents a bit more than 100Mo, and the virtual environment that you will generate to run the app is approximately 1Go.
 
 ### TO DO 
 Next release functionalities :
