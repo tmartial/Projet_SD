@@ -28,7 +28,8 @@ They are a subset of CelebA database (http://mmlab.ie.cuhk.edu.hk/projects/Celeb
 
 ### TO DO 
 Next release functionalities :
-Pre-select the attributes of your portrait ! For a faster and more accurate selection, the software will ask you to choose a few characteristics, in order to show already filtered faces.
+- Pre-select the attributes of your portrait ! For a faster and more accurate selection, the software will ask you to choose a few characteristics, in order to show already filtered faces.
+- Are you feeling lost during the identification ? Click on the Help Button to see the tutorial once again, at any time. 
 
 ### Authors:
 For bug reports and feedback do not hesitate to contact the authors:
