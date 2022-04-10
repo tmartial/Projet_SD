@@ -1,3 +1,13 @@
+"""
+This module allows to generate new populations starting
+from an original population (np.array), using a genetic algorithm.
+This module implements several mutation functions, using the random library.
+"""
+__author__ = "Emma Ceci, Thomas Martial, Emma Molière, Ombeline Trancart"
+__license__ = "GPL-3.0"
+__maintainer__ = "Emma Ceci"
+__email__ = "emma.ceci@insa-lyon.fr"
+
 ######################
 ##### Librairies #####
 ######################
@@ -29,6 +39,8 @@ def noise(pop, eps, Tm):
         mut_pop : np.array
             the population whose individuals underwent mutation
         
+        Examples
+        --------
         >>> pop = np.array([np.array(rd.choices([-1.,1.],k=10)),np.array(rd.choices([-1.,1.],k=10))])
         >>> pop
         array([[ 1., -1.,  1., -1.,  1.,  1.,  1., -1.,  1.,  1.],
@@ -60,6 +72,8 @@ def mean_genome(parents):
         mean_pop : np.array
             the population of mean individuals
         
+        Examples
+        --------
         >>> parents = np.array([np.array(rd.choices([-1.,1.],k=10)),np.array(rd.choices([-3.,3.],k=10))])
         >>> parents
         array([[-1.,  1., -1.,  1.,  1., -1., -1.,  1.,  1., -1.],
@@ -95,6 +109,8 @@ def add_ind(pop, ind, pop_size):
         new_pop : list
             the newly created population which contains the genomes of pop and ind
         
+        Examples
+        --------
         >>> pop = [np.array(rd.choices([-1.,1.],k=5)),np.array(rd.choices([-1.,1.],k=5))]
         >>> pop
         array([[ 1.,  1., -1., -1., -1.],
@@ -181,7 +197,6 @@ def new_generation(parents_pop, fitness_, eliteCount = 1, crossoverFraction = 0.
     pop = np.delete(pop, index_sort[::-1][0:eliteCount], axis=0)
     fitness = np.delete(fitness, index_sort[::-1][0:eliteCount], axis=0)
     
-
     nb_mutated = int(pop_size - eliteCount - nb_crossover) #number of individuals who only undergo mutation
     i_mutated = np.random.choice(len(pop), nb_mutated, replace=False, p=fitness/sum(fitness))
     new_pop = add_ind(new_pop, pop[i_mutated], pop_size)
@@ -197,76 +212,3 @@ def new_generation(parents_pop, fitness_, eliteCount = 1, crossoverFraction = 0.
         #print("shuffled", new_pop)
 
     return np.array(new_pop)
-
-#################
-##### MAIN ######
-#################
-
-#print(help(mutation))
-if __name__=="__main__":
-    #pop = [np.array(rd.choices([-2,2],k=10)),np.array(rd.choices([-1,1],k=10))]
-    pop2 = np.array([np.array(rd.choices([-3,3],k=10)),np.array(rd.choices([-4,4],k=10)),np.array(rd.choices([-6,6],k=10)),np.array(rd.choices([-9,9],k=10)),np.array(rd.choices([-5,5],k=10))]) #elitepop
-    #pop2 = [np.array(rd.choices([-3,3],k=10)),np.array(rd.choices([-4,4],k=10)),np.array(rd.choices([-6,6],k=10)),np.array(rd.choices([-9,9],k=10)),np.array(rd.choices([-5,5],k=10))] #elitepop
-    #pop3 = rd.choices(pop2, k=2) # parents
-    #pop4 = rd.choices(pop2, k=2) #[np.array([rd.choices([-5,5],k=10)])] # one mutation
-    #pop4 = [np.array([])]
-    #print("pop", pop)
-    #print("\npop2", pop2)
-    #print("\npop3", pop3)
-    #print("\npop4", pop4)
-    fitness = np.array([0.9 , 0.5, 0.1, 0.1, 0.9])
-    eliteCount = 1
-    crossoverFraction = 0.8
-    Tm = 0.1
-    pop_size = 6
-    eps = 20
-
-    #L = np.copy(pop2[1])
-    #K = np.array(rd.choices([-10,10],k=10))
-
-    #print("pop", pop2)
-    #print("L",L)
-    #print("K", K)
-    #print("L in pop", np.any(np.all(L == pop2, axis=1)))
-    #print("K in pop",np.any(np.all(K == pop2, axis=1)))
-    
-    #pop2mut = noise(Tm, pop2, eps)
-    
-    #print(pop2.shape[0])
-    new_pop = new_generation(pop2, fitness, eliteCount, crossoverFraction, pop_size, Tm, eps, True)
-    print("old_pop\n", pop2)
-    print("new_pop\n", new_pop)
-    #print(len(pop2))
-    #print(type(pop2[0]))
-    #print(type(pop2[0,0]))
-    #print("\n")
-    #print(len(new_pop))
-    #print(type(new_pop[0]))
-    #print(type(new_pop[0,0]))
-
-    #pop_test1 = add_ind(pop, pop2, 6)
-    #print("\npoptest1", pop_test1)
-    
-    #pop_test2 = add_ind(pop, pop3, 6)
-    #print("\npoptest2", pop_test2)
-    #print(len(pop3))
-    #pop_test3 = add_ind(pop, pop4, 6)
-    #print("\npoptest3", pop_test3)
-    #print('\n',pop4)
-    
-    #print(pop,'\n')
-    #popm = noise(0.5, pop, 5)
-    #print("noise:\n",popm,'\n')
-    #popmc = crossing_over2(pop, 0)
-    #print("crossing over:\n",popmc)
-   # print(mean_genome(popmc, 0.5))
-
-    #pop = [np.array(rd.choices([-1.,1.],k=10)),np.array(rd.choices([-1.,1.],k=10))]
-    #a = np.array([np.array(rd.choices([-2.,2.],k=10)),np.array(rd.choices([-2.,2.],k=10))])
-    #print("pop", pop)
-    #print("a", a)
-    #print("add", add_ind(pop, a, 6))
-    #print(help(noise))
-
-   
-   
