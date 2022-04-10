@@ -443,7 +443,7 @@ intro.place(relx=0.5, rely=0.55,anchor='center')
 
 
 # Charge les 400 images encodées
-encoded_faces = np.loadtxt("./encoded_faces_05_04_bis.txt")
+encoded_faces = np.loadtxt("./Code Auto-encodeur_Decodeur/encoded_faces_05_04_bis.txt")
 # Choix de 6 images au hasard
 encoded_faces_6 = encoded_faces[np.random.choice(encoded_faces.shape[0], 6, replace=False), :]
 portraits = AEM.decode_faces(encoded_faces_6)
