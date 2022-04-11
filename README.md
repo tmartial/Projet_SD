@@ -12,7 +12,7 @@ You have to refer to the section that corresponds to your work environments (Lin
 If you already have the required packages installed on your machine, you don't have to go through the virtual environment steps.
 
 ### How to use the EETO software 
-You can refer to the same tutorial " TUTORIAL_EETO_install_and_use.pdf " as for the installation instructions, starting from page 4.
+You can refer to the same tutorial " **TUTORIAL_EETO_install_and_use.pdf** " as for the installation instructions, starting from page 4.
 
 ### Dependencies
 Please refer to requirements.txt for more detailed instructions.
